@@ -1,8 +1,9 @@
 import { useParams, useNavigate } from "react-router-dom";
+import { useState, useRef } from "react";
 import { DrawingCanvas } from "@/components/DrawingCanvas";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft, Target, Lightbulb, Eye, RefreshCw, Download, Palette, Settings, Pencil } from "lucide-react";
+import { ArrowLeft, Target, Lightbulb, Eye, EyeOff, RefreshCw, Download, Palette, Settings, Pencil } from "lucide-react";
 
 // Import reference images
 import headShapeRef from "@/assets/reference-head-shape.png";
@@ -22,6 +23,10 @@ interface LessonData {
 const Canvas = () => {
   const { lessonId } = useParams();
   const navigate = useNavigate();
+  const [showReference, setShowReference] = useState(true);
+  const [brushSize, setBrushSize] = useState(2);
+  const [activeColor, setActiveColor] = useState("#000000");
+  const drawingCanvasRef = useRef<any>(null);
 
   const lessonsData: Record<string, LessonData> = {
     "head-shape": {
@@ -144,6 +149,32 @@ const Canvas = () => {
     }
   };
 
+  const handleClearCanvas = () => {
+    if (drawingCanvasRef.current) {
+      drawingCanvasRef.current.handleClear();
+    }
+  };
+
+  const handleDownloadCanvas = () => {
+    if (drawingCanvasRef.current) {
+      drawingCanvasRef.current.handleDownload();
+    }
+  };
+
+  const handleCompleteLesson = () => {
+    if (drawingCanvasRef.current) {
+      drawingCanvasRef.current.handleComplete();
+    }
+  };
+
+  const handleNextLesson = () => {
+    handleNext();
+  };
+
+  const handleColorChange = (color: string) => {
+    setActiveColor(color);
+  };
+
   return (
     <div className="canvas-page">
       {/* Header */}
@@ -153,9 +184,14 @@ const Canvas = () => {
             <h1 className="canvas-title">{currentLesson.title}</h1>
             <p className="canvas-subtitle">Interactive Drawing Canvas</p>
           </div>
-          <Button variant="outline" size="sm" className="hide-reference-btn">
-            <Eye className="w-4 h-4 mr-2" />
-            Hide Reference
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="hide-reference-btn"
+            onClick={() => setShowReference(!showReference)}
+          >
+            {showReference ? <Eye className="w-4 h-4 mr-2" /> : <EyeOff className="w-4 h-4 mr-2" />}
+            {showReference ? "Hide" : "Show"} Reference
           </Button>
         </div>
       </header>
@@ -207,10 +243,15 @@ const Canvas = () => {
             <div className="canvas-container">
               <div className="canvas-area">
                 <DrawingCanvas
+                  ref={drawingCanvasRef}
                   referenceImage={currentLesson.referenceImage}
                   lessonTitle={currentLesson.title}
                   onNext={handleNext}
                   onComplete={handleComplete}
+                  showReference={showReference}
+                  onToggleReference={() => setShowReference(!showReference)}
+                  activeColor={activeColor}
+                  brushSize={brushSize}
                 />
               </div>
             </div>
@@ -225,8 +266,15 @@ const Canvas = () => {
               </div>
               <div className="sidebar-content">
                 <div className="tool-control">
-                  <label>Brush Size: 2px</label>
-                  <input type="range" min="1" max="20" defaultValue="2" className="brush-slider" />
+                  <label>Brush Size: {brushSize}px</label>
+                  <input 
+                    type="range" 
+                    min="1" 
+                    max="20" 
+                    value={brushSize}
+                    onChange={(e) => setBrushSize(Number(e.target.value))}
+                    className="brush-slider" 
+                  />
                 </div>
               </div>
             </div>
@@ -238,22 +286,61 @@ const Canvas = () => {
               </div>
               <div className="sidebar-content">
                 <div className="color-palette">
-                  <div className="color-swatch black"></div>
-                  <div className="color-swatch dark-grey"></div>
-                  <div className="color-swatch medium-grey"></div>
-                  <div className="color-swatch light-grey"></div>
-                  <div className="color-swatch white"></div>
-                  <div className="color-swatch very-light-grey"></div>
-                  <div className="color-swatch dark-brown"></div>
-                  <div className="color-swatch orange"></div>
-                  <div className="color-swatch light-brown"></div>
-                  <div className="color-swatch light-orange"></div>
-                  <div className="color-swatch teal"></div>
-                  <div className="color-swatch light-blue"></div>
+                  <div 
+                    className={`color-swatch black ${activeColor === '#000000' ? 'active' : ''}`}
+                    onClick={() => handleColorChange('#000000')}
+                  ></div>
+                  <div 
+                    className={`color-swatch dark-grey ${activeColor === '#444444' ? 'active' : ''}`}
+                    onClick={() => handleColorChange('#444444')}
+                  ></div>
+                  <div 
+                    className={`color-swatch medium-grey ${activeColor === '#888888' ? 'active' : ''}`}
+                    onClick={() => handleColorChange('#888888')}
+                  ></div>
+                  <div 
+                    className={`color-swatch light-grey ${activeColor === '#cccccc' ? 'active' : ''}`}
+                    onClick={() => handleColorChange('#cccccc')}
+                  ></div>
+                  <div 
+                    className={`color-swatch white ${activeColor === '#ffffff' ? 'active' : ''}`}
+                    onClick={() => handleColorChange('#ffffff')}
+                  ></div>
+                  <div 
+                    className={`color-swatch very-light-grey ${activeColor === '#f0f0f0' ? 'active' : ''}`}
+                    onClick={() => handleColorChange('#f0f0f0')}
+                  ></div>
+                  <div 
+                    className={`color-swatch dark-brown ${activeColor === '#8B4513' ? 'active' : ''}`}
+                    onClick={() => handleColorChange('#8B4513')}
+                  ></div>
+                  <div 
+                    className={`color-swatch orange ${activeColor === '#D2691E' ? 'active' : ''}`}
+                    onClick={() => handleColorChange('#D2691E')}
+                  ></div>
+                  <div 
+                    className={`color-swatch light-brown ${activeColor === '#CD853F' ? 'active' : ''}`}
+                    onClick={() => handleColorChange('#CD853F')}
+                  ></div>
+                  <div 
+                    className={`color-swatch light-orange ${activeColor === '#F4A460' ? 'active' : ''}`}
+                    onClick={() => handleColorChange('#F4A460')}
+                  ></div>
+                  <div 
+                    className={`color-swatch teal ${activeColor === '#4ECDC4' ? 'active' : ''}`}
+                    onClick={() => handleColorChange('#4ECDC4')}
+                  ></div>
+                  <div 
+                    className={`color-swatch light-blue ${activeColor === '#45B7D1' ? 'active' : ''}`}
+                    onClick={() => handleColorChange('#45B7D1')}
+                  ></div>
                 </div>
                 <div className="custom-color">
                   <label>Custom Color</label>
-                  <div className="custom-color-swatch"></div>
+                  <div 
+                    className="custom-color-swatch"
+                    style={{ backgroundColor: activeColor }}
+                  ></div>
                 </div>
               </div>
             </div>
@@ -265,18 +352,34 @@ const Canvas = () => {
               </div>
               <div className="sidebar-content">
                 <div className="action-buttons">
-                  <Button variant="outline" size="sm" className="action-btn">
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="action-btn"
+                    onClick={handleClearCanvas}
+                  >
                     <RefreshCw className="w-4 h-4 mr-2" />
                     Clear Canvas
                   </Button>
-                  <Button variant="outline" size="sm" className="action-btn">
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="action-btn"
+                    onClick={handleDownloadCanvas}
+                  >
                     <Download className="w-4 h-4 mr-2" />
                     Download PNG
                   </Button>
-                  <Button className="action-btn primary">
+                  <Button 
+                    className="action-btn primary"
+                    onClick={handleCompleteLesson}
+                  >
                     Complete Lesson
                   </Button>
-                  <Button className="action-btn primary">
+                  <Button 
+                    className="action-btn primary"
+                    onClick={handleNextLesson}
+                  >
                     Next Lesson
                   </Button>
                 </div>
