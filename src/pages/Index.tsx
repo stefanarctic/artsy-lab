@@ -105,21 +105,39 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-accent/5">
       {/* Header */}
-      <header className="border-b border-border bg-background">
-        <div className="container mx-auto px-4 py-4">
+      <header className="backdrop-blur-sm bg-background/80 border-b border-border/50 sticky top-0 z-50">
+        <div className="container mx-auto px-4 py-6">
           <nav className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <h1 className="text-2xl font-bold text-foreground">ArtsyLab</h1>
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 bg-gradient-to-br from-primary to-accent rounded-lg flex items-center justify-center">
+                <Palette className="w-5 h-5 text-primary-foreground" />
+              </div>
+              <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">ArtsyLab</h1>
             </div>
-            <div className="hidden md:flex items-center gap-6">
-              <a href="#" className="text-sm text-muted-foreground hover:text-foreground">ACASĂ</a>
-              <a href="#" className="text-sm text-muted-foreground hover:text-foreground">P.U.L.S</a>
-              <a href="#" className="text-sm text-muted-foreground hover:text-foreground">PROBLEME</a>
-              <a href="#" className="text-sm text-muted-foreground hover:text-foreground">SIMULĂRI</a>
-              <a href="#" className="text-sm text-muted-foreground hover:text-foreground">RESURSE</a>
-              <a href="#" className="text-sm text-muted-foreground hover:text-foreground">PROFIL</a>
+            <div className="hidden md:flex items-center gap-8">
+              <a href="#" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors relative group">
+                ACASĂ
+                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full"></span>
+              </a>
+              <a href="#" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors relative group">
+                P.U.L.S
+                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full"></span>
+              </a>
+              <a href="#" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors relative group">
+                PROBLEME
+                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full"></span>
+              </a>
+              <a href="#" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors relative group">
+                SIMULĂRI
+                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full"></span>
+              </a>
+              <a href="#" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors relative group">
+                RESURSE
+                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full"></span>
+              </a>
+              <Button variant="outline" size="sm">PROFIL</Button>
             </div>
           </nav>
         </div>
@@ -127,43 +145,65 @@ const Index = () => {
 
       <div className="container mx-auto px-4">
         {/* Hero Section */}
-        <section className="py-16">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div>
-              <h1 className="text-5xl font-bold text-foreground mb-6">
-                Descoperă fizica prin
-                exerciții și simulări
-                interactive
+        <section className="py-24 relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-transparent to-accent/5 rounded-3xl"></div>
+          <div className="relative grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+            <div className="space-y-8">
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 border border-primary/20 rounded-full text-sm font-medium text-primary">
+                <div className="w-2 h-2 bg-primary rounded-full animate-pulse"></div>
+                Nouă experiență de învățare
+              </div>
+              <h1 className="text-6xl lg:text-7xl font-black leading-tight">
+                <span className="bg-gradient-to-r from-foreground via-foreground to-muted-foreground bg-clip-text text-transparent">
+                  Descoperă
+                </span>
+                <br />
+                <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                  arta desenului
+                </span>
+                <br />
+                <span className="text-foreground">
+                  prin practică
+                </span>
               </h1>
-              <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
-                ArtsyLab - Platforma educațională pentru studiul conceptelor de desen artistic, 
-                unde descoperi și înveți prin probleme și simulări interactive.
+              <p className="text-xl text-muted-foreground leading-relaxed max-w-xl">
+                Platformă educațională inovatoare care transformă învățarea desenului artistic printr-o experiență 
+                interactivă și captivantă.
               </p>
-              <div className="flex gap-4">
+              <div className="flex flex-col sm:flex-row gap-4">
                 <Button 
                   size="lg" 
                   onClick={() => navigate("/lessons")}
-                  className="px-8"
+                  className="px-8 py-4 text-lg font-semibold bg-gradient-to-r from-primary to-accent hover:opacity-90 transition-opacity"
                 >
-                  Explorează problemele
+                  Începe aventura
+                  <Target className="w-5 h-5 ml-2" />
                 </Button>
                 <Button 
                   variant="outline" 
                   size="lg"
-                  className="px-8"
+                  className="px-8 py-4 text-lg font-semibold border-2 hover:bg-accent/10"
                 >
-                  Încearcă simulările
+                  Vezi simulările
+                  <Eye className="w-5 h-5 ml-2" />
                 </Button>
               </div>
             </div>
-            <div className="flex justify-center">
+            <div className="flex justify-center lg:justify-end">
               <div className="relative">
-                <div className="w-64 h-64 bg-muted rounded-lg flex items-center justify-center">
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-accent/20 rounded-3xl blur-3xl transform rotate-6"></div>
+                <div className="relative w-80 h-80 bg-gradient-to-br from-card to-muted/50 rounded-3xl border border-border/50 backdrop-blur-sm flex items-center justify-center shadow-2xl">
+                  <div className="absolute top-4 left-4 w-3 h-3 bg-red-400 rounded-full"></div>
+                  <div className="absolute top-4 left-10 w-3 h-3 bg-yellow-400 rounded-full"></div>
+                  <div className="absolute top-4 left-16 w-3 h-3 bg-green-400 rounded-full"></div>
                   <img 
                     src={artIcon} 
                     alt="Art Icon"
-                    className="w-32 h-32 opacity-60"
+                    className="w-40 h-40 filter drop-shadow-2xl animate-float"
                   />
+                  <div className="absolute bottom-6 left-6 right-6 h-2 bg-primary/20 rounded-full overflow-hidden">
+                    <div className="h-full w-3/4 bg-gradient-to-r from-primary to-accent rounded-full"></div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -171,19 +211,31 @@ const Index = () => {
         </section>
 
         {/* Features Section */}
-        <section className="py-16">
-          <h2 className="text-3xl font-bold text-center mb-12">Ce îți oferă ArtsyLab?</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <section className="py-20">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl lg:text-5xl font-bold mb-4">
+              <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                Ce îți oferă ArtsyLab?
+              </span>
+            </h2>
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+              Descoperă instrumentele care îți vor transforma pasiunea pentru artă în abilități concrete
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {features.map((feature, index) => (
-              <Card key={index} className="text-center border border-border shadow-card hover:shadow-lg transition-shadow">
-                <CardHeader className="pb-4">
-                  <div className="flex justify-center mb-4">
-                    {feature.icon}
+              <Card key={index} className="group relative overflow-hidden border-2 border-border/50 hover:border-primary/50 transition-all duration-300 hover:shadow-xl hover:-translate-y-2">
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-accent/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <CardHeader className="relative pb-4 pt-8">
+                  <div className="flex justify-center mb-6">
+                    <div className="w-16 h-16 bg-gradient-to-br from-primary/20 to-accent/20 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                      {feature.icon}
+                    </div>
                   </div>
-                  <CardTitle className="text-lg">{feature.title}</CardTitle>
+                  <CardTitle className="text-xl font-bold group-hover:text-primary transition-colors">{feature.title}</CardTitle>
                 </CardHeader>
-                <CardContent>
-                  <CardDescription className="text-sm leading-relaxed">
+                <CardContent className="relative">
+                  <CardDescription className="text-base leading-relaxed text-muted-foreground">
                     {feature.description}
                   </CardDescription>
                 </CardContent>
@@ -193,26 +245,43 @@ const Index = () => {
         </section>
 
         {/* Simulations Section */}
-        <section className="py-16">
-          <h2 className="text-3xl font-bold text-center mb-12">Explorează simulările noastre</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <section className="py-20 relative">
+          <div className="absolute inset-0 bg-gradient-to-r from-accent/5 via-transparent to-primary/5 rounded-3xl"></div>
+          <div className="relative text-center mb-16">
+            <h2 className="text-4xl lg:text-5xl font-bold mb-4">
+              <span className="bg-gradient-to-r from-accent to-primary bg-clip-text text-transparent">
+                Simulări interactive
+              </span>
+            </h2>
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+              Experimentează cu tehnici avansate de desenare prin simulări realiste
+            </p>
+          </div>
+          <div className="relative grid grid-cols-1 md:grid-cols-2 gap-8">
             {simulations.map((sim, index) => (
-              <Card key={index} className="overflow-hidden border border-border shadow-card hover:shadow-lg transition-shadow">
-                <div className="h-48 bg-muted"></div>
-                <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <CardTitle className="text-xl">{sim.title}</CardTitle>
-                    <Badge className={getDifficultyColor(sim.difficulty)}>
+              <Card key={index} className="group relative overflow-hidden border-2 border-border/50 hover:border-accent/50 transition-all duration-500 hover:shadow-2xl hover:scale-105">
+                <div className="absolute inset-0 bg-gradient-to-br from-accent/10 to-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                <div className="relative h-48 bg-gradient-to-br from-muted/50 to-accent/10 flex items-center justify-center overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-br from-accent/20 to-primary/20 blur-xl group-hover:blur-none transition-all duration-500"></div>
+                  <div className="relative w-20 h-20 bg-gradient-to-br from-accent to-primary rounded-2xl flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform">
+                    <PenTool className="w-10 h-10 text-white" />
+                  </div>
+                </div>
+                <CardHeader className="relative">
+                  <div className="flex items-center justify-between mb-2">
+                    <CardTitle className="text-2xl group-hover:text-accent transition-colors">{sim.title}</CardTitle>
+                    <Badge className={`${getDifficultyColor(sim.difficulty)} px-3 py-1 font-semibold`}>
                       {sim.difficulty}
                     </Badge>
                   </div>
-                  <CardDescription className="text-sm">
+                  <CardDescription className="text-base leading-relaxed">
                     {sim.description}
                   </CardDescription>
                 </CardHeader>
-                <CardContent>
-                  <Button variant="outline" size="sm">
-                    Explorează
+                <CardContent className="relative">
+                  <Button variant="outline" className="w-full group-hover:bg-accent/10 group-hover:border-accent transition-colors">
+                    <Eye className="w-4 h-4 mr-2" />
+                    Explorează simularea
                   </Button>
                 </CardContent>
               </Card>
@@ -221,27 +290,40 @@ const Index = () => {
         </section>
 
         {/* Problem Sets Section */}
-        <section className="py-16">
-          <h2 className="text-3xl font-bold text-center mb-12">Probleme interactive</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <section className="py-20">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl lg:text-5xl font-bold mb-4">
+              <span className="bg-gradient-to-r from-foreground to-primary bg-clip-text text-transparent">
+                Probleme interactive
+              </span>
+            </h2>
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+              Dezvoltă-ți abilitățile pas cu pas prin exerciții structurate pe niveluri
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {problemSets.map((set, index) => (
-              <Card key={index} className="text-center border border-border shadow-card hover:shadow-lg transition-shadow">
-                <CardHeader>
-                  <div className="flex justify-center mb-4">
-                    <div className="w-12 h-12 bg-primary-light rounded-lg flex items-center justify-center">
+              <Card key={index} className="group relative text-center border-2 border-border/50 hover:border-primary/50 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-accent/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <CardHeader className="relative">
+                  <div className="flex justify-center mb-6">
+                    <div className="w-16 h-16 bg-gradient-to-br from-primary/20 to-accent/20 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg">
                       {set.icon}
                     </div>
                   </div>
-                  <CardTitle className="text-lg">{set.level}</CardTitle>
-                  <CardDescription className="text-sm">
+                  <CardTitle className="text-xl font-bold group-hover:text-primary transition-colors">{set.level}</CardTitle>
+                  <CardDescription className="text-base leading-relaxed mt-2">
                     {set.description}
                   </CardDescription>
                 </CardHeader>
-                <CardContent>
-                  <p className="text-sm text-muted-foreground mb-4">
-                    {set.lessons} lecții disponibile
-                  </p>
-                  <Button className="w-full">
+                <CardContent className="relative">
+                  <div className="mb-6">
+                    <span className="inline-flex items-center gap-2 px-3 py-1 bg-muted rounded-full text-sm font-medium">
+                      <BookOpen className="w-4 h-4" />
+                      {set.lessons} lecții disponibile
+                    </span>
+                  </div>
+                  <Button className="w-full bg-gradient-to-r from-primary to-accent hover:opacity-90 transition-opacity">
                     Începe acum
                   </Button>
                 </CardContent>
