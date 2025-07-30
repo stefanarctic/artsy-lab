@@ -1,5 +1,7 @@
 import { useLocation } from "react-router-dom";
 import { useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Home, AlertTriangle } from "lucide-react";
 
 const NotFound = () => {
   const location = useLocation();
@@ -12,13 +14,24 @@ const NotFound = () => {
   }, [location.pathname]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">404</h1>
-        <p className="text-xl text-gray-600 mb-4">Oops! Page not found</p>
-        <a href="/" className="text-blue-500 hover:text-blue-700 underline">
-          Return to Home
-        </a>
+    <div className="not-found-page">
+      <div className="not-found-container">
+        <div className="not-found-icon">
+          <AlertTriangle />
+        </div>
+        <h1 className="not-found-title">404</h1>
+        <p className="not-found-description">
+          Oops! Pagina pe care o cauți nu există.
+        </p>
+        <div className="not-found-actions">
+          <Button className="not-found-button primary">
+            <Home />
+            Înapoi la Acasă
+          </Button>
+          <Button variant="outline" className="not-found-button secondary">
+            Contactează Suportul
+          </Button>
+        </div>
       </div>
     </div>
   );

@@ -139,9 +139,8 @@ export const DrawingCanvas = ({
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 h-full">
-      {/* Canvas Area */}
       <div className="lg:col-span-3">
-        <Card className="h-full">
+        {/* <Card className="h-full">
           <CardHeader>
             <div className="flex items-center justify-between">
               <div>
@@ -163,13 +162,13 @@ export const DrawingCanvas = ({
                 </Button>
               </div>
             </div>
-          </CardHeader>
+          </CardHeader> */}
           
           <CardContent>
             <div className="border-2 border-border rounded-lg p-4 bg-canvas">
               <canvas 
                 ref={canvasRef} 
-                className="border border-border rounded shadow-canvas max-w-full" 
+                className="border border-border rounded shadow-canvas max-w-full canvas-element" 
               />
             </div>
           </CardContent>
@@ -177,8 +176,7 @@ export const DrawingCanvas = ({
       </div>
 
       {/* Tools Panel */}
-      <div className="space-y-6">
-        {/* Drawing Tools */}
+      {/* <div className="space-y-6">
         <Card>
           <CardHeader>
             <CardTitle className="text-lg flex items-center gap-2">
@@ -187,7 +185,6 @@ export const DrawingCanvas = ({
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            {/* Brush Size */}
             <div>
               <label className="text-sm font-medium">Brush Size: {brushSize[0]}px</label>
               <Slider
@@ -202,7 +199,6 @@ export const DrawingCanvas = ({
           </CardContent>
         </Card>
 
-        {/* Color Palette */}
         <Card>
           <CardHeader>
             <CardTitle className="text-lg flex items-center gap-2">
@@ -236,7 +232,6 @@ export const DrawingCanvas = ({
           </CardContent>
         </Card>
 
-        {/* Actions */}
         <Card>
           <CardHeader>
             <CardTitle className="text-lg">Actions</CardTitle>
@@ -285,7 +280,7 @@ export const DrawingCanvas = ({
             )}
           </CardContent>
         </Card>
-      </div>
+      </div> */}
     </div>
   );
 };

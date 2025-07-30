@@ -1,0 +1,192 @@
+// Master classes section styles
+.master-classes {
+  padding: 5rem 0;
+  
+  .master-classes-header {
+    text-align: center;
+    margin-bottom: 4rem;
+    
+    .master-classes-title {
+      font-size: 2.25rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      
+      @media (min-width: 1024px) {
+        font-size: 3rem;
+      }
+      
+      span {
+        background: linear-gradient(to right, var(--foreground), var(--primary));
+        background-clip: text;
+        -webkit-background-clip: text;
+        color: transparent;
+      }
+    }
+    
+    .master-classes-description {
+      font-size: 1.25rem;
+      color: var(--muted-foreground);
+      max-width: 42rem;
+      margin: 0 auto;
+    }
+  }
+  
+  .master-classes-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    
+    @media (min-width: 768px) {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  
+  .master-class-card {
+    position: relative;
+    text-align: center;
+    border: 1px solid rgba(226, 232, 240, 0.5);
+    border-radius: $radius-lg;
+    transition: all $transition-normal;
+    overflow: hidden;
+    background-color: rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(4px);
+    
+    &:hover {
+      border-color: rgba(59, 130, 246, 0.5);
+      box-shadow: $shadow-xl;
+      transform: translateY(-0.25rem);
+    }
+    
+    &::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom right, rgba(59, 130, 246, 0.05), rgba(139, 92, 246, 0.05));
+      opacity: 0;
+      transition: opacity $transition-normal;
+    }
+    
+    &:hover::before {
+      opacity: 1;
+    }
+    
+    .master-class-header {
+      position: relative;
+      padding: 1.5rem 1.5rem 0;
+      
+      .master-class-icon {
+        margin: 0 auto 1rem;
+        width: 4rem;
+        height: 4rem;
+        background: linear-gradient(to bottom right, rgba(59, 130, 246, 0.2), rgba(139, 92, 246, 0.2));
+        border-radius: $radius-2xl;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: transform $transition-normal;
+        box-shadow: $shadow-lg;
+        
+        svg {
+          width: 2rem;
+          height: 2rem;
+          color: var(--primary);
+        }
+      }
+      
+      &:hover .master-class-icon {
+        transform: scale(1.1);
+      }
+      
+      .master-class-title {
+        font-size: 1.125rem;
+        font-weight: 700;
+        transition: color $transition-normal;
+        
+        &:hover {
+          color: var(--primary);
+        }
+      }
+      
+      .master-class-instructor {
+        font-size: 0.875rem;
+        color: var(--muted-foreground);
+        margin-top: 0.25rem;
+      }
+    }
+    
+    .master-class-content {
+      position: relative;
+      padding: 0 1.5rem 1.5rem;
+      
+      .master-class-details {
+        margin-bottom: 1rem;
+        
+        .detail-item {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          font-size: 0.875rem;
+          margin-bottom: 1rem;
+          
+          .detail-label {
+            color: var(--muted-foreground);
+          }
+          
+          .detail-value {
+            font-weight: 500;
+          }
+        }
+      }
+      
+      .master-class-badge {
+        padding: 0.25rem 0.75rem;
+        font-weight: 600;
+        border: 1px solid;
+        border-radius: $radius-md;
+        margin-bottom: 1rem;
+        
+        &.beginner {
+          background-color: rgba(16, 185, 129, 0.1);
+          color: #047857;
+          border-color: rgba(16, 185, 129, 0.3);
+        }
+        
+        &.intermediate {
+          background-color: rgba(245, 158, 11, 0.1);
+          color: #d97706;
+          border-color: rgba(245, 158, 11, 0.3);
+        }
+        
+        &.advanced {
+          background-color: rgba(239, 68, 68, 0.1);
+          color: #dc2626;
+          border-color: rgba(239, 68, 68, 0.3);
+        }
+      }
+      
+      .master-class-button {
+        width: 100%;
+        background: linear-gradient(to right, var(--primary), var(--accent));
+        color: white;
+        padding: 0.75rem 1rem;
+        border-radius: $radius-md;
+        font-weight: 500;
+        transition: opacity $transition-normal;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        margin-top: 1rem;
+        
+        &:hover {
+          opacity: 0.9;
+        }
+        
+        svg {
+          width: 1rem;
+          height: 1rem;
+        }
+      }
+    }
+  }
+} 
