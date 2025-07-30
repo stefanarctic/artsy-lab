@@ -110,43 +110,28 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       {/* Artistic Header */}
-      <header className="relative border-b border-border/30 backdrop-blur-xl bg-background/95 sticky top-0 z-50">
-        <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-transparent to-accent/5"></div>
-        <div className="container mx-auto px-6 py-4 relative">
-          <nav className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <div className="relative">
-                <div className="w-10 h-10 bg-gradient-to-br from-primary via-accent to-secondary rounded-2xl flex items-center justify-center shadow-lg">
-                  <Palette className="w-6 h-6 text-white" />
+      <header className="header">
+        <div className="header-container">
+          <nav className="header-nav">
+            <div className="header-brand">
+              <div className="header-logo">
+                <div className="logo-icon">
+                  <Palette />
                 </div>
-                <div className="absolute -top-1 -right-1 w-4 h-4 bg-accent rounded-full animate-pulse"></div>
+                <div className="logo-dot"></div>
               </div>
-              <div>
-                <h1 className="text-2xl font-black bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent">
-                  ArtsyLab
-                </h1>
-                <p className="text-xs text-muted-foreground -mt-1">Creative Learning Studio</p>
+              <div className="header-title">
+                <h1>ArtsyLab</h1>
+                <p>Creative Learning Studio</p>
               </div>
             </div>
             
-            <div className="hidden lg:flex items-center gap-8">
-              <a href="#" className="text-sm font-medium text-foreground hover:text-primary transition-all relative group">
-                Studio
-                <div className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full"></div>
-              </a>
-              <a href="#" className="text-sm font-medium text-foreground hover:text-primary transition-all relative group">
-                Galerie
-                <div className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full"></div>
-              </a>
-              <a href="#" className="text-sm font-medium text-foreground hover:text-primary transition-all relative group">
-                Masterclass
-                <div className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full"></div>
-              </a>
-              <a href="#" className="text-sm font-medium text-foreground hover:text-primary transition-all relative group">
-                Comunitate
-                <div className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full"></div>
-              </a>
-              <Button size="sm" className="bg-gradient-to-r from-primary to-accent text-white font-medium px-6 shadow-lg hover:shadow-xl transition-all">
+            <div className="header-nav-links">
+              <a href="#">Studio</a>
+              <a href="#">Galerie</a>
+              <a href="#">Masterclass</a>
+              <a href="#">Comunitate</a>
+              <Button size="sm" className="header-button">
                 Contul Meu
               </Button>
             </div>
@@ -155,121 +140,118 @@ const Index = () => {
       </header>
 
       {/* Artistic Hero Section */}
-      <section className="relative py-24 overflow-hidden">
+      <section className="hero">
         {/* Background Art Elements */}
-        <div className="absolute inset-0">
-          <div className="absolute top-20 left-10 w-32 h-32 bg-gradient-to-br from-primary/20 to-transparent rounded-full blur-2xl animate-pulse"></div>
-          <div className="absolute bottom-32 right-16 w-48 h-48 bg-gradient-to-br from-accent/20 to-transparent rounded-full blur-3xl"></div>
-          <div className="absolute top-1/2 left-1/3 w-24 h-24 bg-gradient-to-br from-secondary/20 to-transparent rounded-full blur-xl animate-float"></div>
+        <div className="hero-background">
+          <div className="bg-element-1"></div>
+          <div className="bg-element-2"></div>
+          <div className="bg-element-3"></div>
         </div>
         
-        <div className="container mx-auto px-6 relative">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-            <div className="space-y-8 max-w-2xl">
-              <div className="inline-flex items-center gap-3 px-4 py-2 bg-primary/10 border border-primary/20 rounded-full">
-                <Star className="w-4 h-4 text-primary animate-spin" />
-                <span className="text-sm font-medium text-primary">Atelierul Digital de Artă</span>
+        <div className="hero-container">
+          <div className="hero-grid">
+            <div className="hero-content">
+              <div className="hero-badge">
+                <Star />
+                <span>Atelierul Digital de Artă</span>
               </div>
               
-              <h1 className="text-5xl lg:text-7xl font-black leading-[0.9] tracking-tight">
-                <span className="block text-foreground">Creează</span>
-                <span className="block bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent">
-                  Artă Vibrantă
-                </span>
-                <span className="block text-foreground/80 text-4xl lg:text-5xl">prin Tehnologie</span>
+              <h1 className="hero-title">
+                <span className="title-line-1">Creează</span>
+                <span className="title-line-2">Artă Vibrantă</span>
+                <span className="title-line-3">prin Tehnologie</span>
               </h1>
               
-              <p className="text-xl text-muted-foreground leading-relaxed">
+              <p className="hero-description">
                 Transformă-ți pasiunea pentru artă într-o abilitate remarcabilă cu ajutorul 
                 tehnologiei moderne și al experților noștri dedicați.
               </p>
               
-              <div className="flex flex-col sm:flex-row gap-4">
+              <div className="hero-buttons">
                 <Button 
                   size="lg" 
                   onClick={() => navigate("/lessons")}
-                  className="group relative bg-gradient-to-r from-primary via-accent to-secondary text-white font-semibold px-8 py-4 text-lg shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105"
+                  className="hero-primary-button"
                 >
-                  <span className="relative z-10 flex items-center gap-2">
+                  <div className="button-content">
                     Începe Călătoria
-                    <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                  </span>
-                  <div className="absolute inset-0 bg-gradient-to-r from-secondary via-primary to-accent opacity-0 group-hover:opacity-100 transition-opacity rounded-lg"></div>
+                    <ArrowRight />
+                  </div>
+                  <div className="button-overlay"></div>
                 </Button>
                 
                 <Button 
                   variant="outline" 
                   size="lg"
-                  className="group border-2 border-foreground/20 text-foreground font-semibold px-8 py-4 text-lg hover:border-primary hover:text-primary transition-all duration-300"
+                  className="hero-secondary-button"
                 >
-                  <Play className="w-5 h-5 mr-2 group-hover:text-primary transition-colors" />
+                  <Play />
                   Demo Live
                 </Button>
               </div>
               
-              <div className="flex items-center gap-8 pt-4">
-                <div className="text-center">
-                  <p className="text-2xl font-bold text-foreground">2.5K+</p>
-                  <p className="text-sm text-muted-foreground">Artiști Activi</p>
+              <div className="hero-stats">
+                <div className="stat-item">
+                  <p className="stat-number">2.5K+</p>
+                  <p className="stat-label">Artiști Activi</p>
                 </div>
-                <div className="w-px h-12 bg-border"></div>
-                <div className="text-center">
-                  <p className="text-2xl font-bold text-foreground">15K+</p>
-                  <p className="text-sm text-muted-foreground">Opere Create</p>
+                <div className="stat-divider"></div>
+                <div className="stat-item">
+                  <p className="stat-number">15K+</p>
+                  <p className="stat-label">Opere Create</p>
                 </div>
-                <div className="w-px h-12 bg-border"></div>
-                <div className="text-center">
-                  <p className="text-2xl font-bold text-foreground">98%</p>
-                  <p className="text-sm text-muted-foreground">Satisfacție</p>
+                <div className="stat-divider"></div>
+                <div className="stat-item">
+                  <p className="stat-number">98%</p>
+                  <p className="stat-label">Satisfacție</p>
                 </div>
               </div>
             </div>
             
-            <div className="flex justify-center lg:justify-end">
-              <div className="relative">
+            <div className="hero-visual">
+              <div className="hero-canvas-container">
                 {/* Floating Art Elements */}
-                <div className="absolute -top-6 -left-6 w-16 h-16 bg-gradient-to-br from-primary to-accent rounded-2xl flex items-center justify-center shadow-xl animate-float">
-                  <Brush className="w-8 h-8 text-white" />
+                <div className="floating-element-1">
+                  <Brush />
                 </div>
-                <div className="absolute -bottom-4 -right-4 w-12 h-12 bg-gradient-to-br from-accent to-secondary rounded-full flex items-center justify-center shadow-lg" style={{ animationDelay: '1s' }}>
-                  <Heart className="w-6 h-6 text-white" />
+                <div className="floating-element-2">
+                  <Heart />
                 </div>
-                <div className="absolute top-16 -right-8 w-10 h-10 bg-gradient-to-br from-secondary to-primary rounded-xl flex items-center justify-center shadow-md animate-pulse">
-                  <Sparkles className="w-5 h-5 text-white" />
+                <div className="floating-element-3">
+                  <Sparkles />
                 </div>
                 
                 {/* Main Canvas */}
-                <div className="relative w-96 h-96 bg-gradient-to-br from-card via-background to-muted/30 rounded-3xl border-2 border-border/50 shadow-2xl backdrop-blur-sm overflow-hidden">
+                <div className="hero-canvas">
                   {/* Canvas Interface */}
-                  <div className="absolute top-6 left-6 right-6 flex items-center justify-between">
-                    <div className="flex gap-2">
-                      <div className="w-3 h-3 bg-rose-400 rounded-full"></div>
-                      <div className="w-3 h-3 bg-amber-400 rounded-full"></div>
-                      <div className="w-3 h-3 bg-emerald-400 rounded-full"></div>
+                  <div className="canvas-header">
+                    <div className="canvas-dots">
+                      <div className="dot red"></div>
+                      <div className="dot yellow"></div>
+                      <div className="dot green"></div>
                     </div>
-                    <div className="text-xs text-muted-foreground font-medium">ArtsyLab Studio</div>
+                    <div className="canvas-title">ArtsyLab Studio</div>
                   </div>
                   
                   {/* Art Icon */}
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="relative">
-                      <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-accent/20 rounded-3xl blur-xl"></div>
+                  <div className="canvas-content">
+                    <div className="canvas-art">
+                      <div className="art-background"></div>
                       <img 
                         src={artIcon} 
                         alt="Art Creation"
-                        className="relative w-48 h-48 filter drop-shadow-2xl animate-float"
                       />
                     </div>
                   </div>
                   
                   {/* Progress Indicators */}
-                  <div className="absolute bottom-6 left-6 right-6 space-y-3">
-                    <div className="flex justify-between text-xs text-muted-foreground">
+                  <div className="canvas-progress">
+                    <div className="progress-info">
                       <span>Creația ta</span>
                       <span>87% completă</span>
                     </div>
-                    <div className="h-2 bg-muted rounded-full overflow-hidden">
-                      <div className="h-full w-[87%] bg-gradient-to-r from-primary via-accent to-secondary rounded-full animate-pulse"></div>
+                    <div className="progress-bar">
+                      <div className="progress-fill"></div>
                     </div>
                   </div>
                 </div>
@@ -281,29 +263,26 @@ const Index = () => {
 
       <div className="container mx-auto px-6">
         {/* Features Section */}
-        <section className="py-20">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl lg:text-5xl font-bold mb-4">
-              <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-                Instrumente Creative
-              </span>
+        <section className="features">
+          <div className="features-header">
+            <h2 className="features-title">
+              <span>Instrumente Creative</span>
             </h2>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+            <p className="features-description">
               Descoperă tehnologiile inovatoare care îți vor accelera progresul artistic
             </p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="features-grid">
             {features.map((feature, index) => (
-              <Card key={index} className="group relative overflow-hidden border border-border/50 hover:border-primary/50 transition-all duration-300 hover:shadow-xl hover:-translate-y-2 bg-card/50 backdrop-blur-sm">
-                <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-accent/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                <CardHeader className="relative text-center">
-                  <div className="mx-auto w-14 h-14 bg-gradient-to-br from-primary/20 to-accent/20 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+              <Card key={index} className="feature-card">
+                <CardHeader className="feature-header">
+                  <div className="feature-icon">
                     {feature.icon}
                   </div>
-                  <CardTitle className="text-lg font-bold group-hover:text-primary transition-colors">{feature.title}</CardTitle>
+                  <CardTitle className="feature-title">{feature.title}</CardTitle>
                 </CardHeader>
-                <CardContent className="relative text-center">
-                  <CardDescription className="text-sm leading-relaxed text-muted-foreground">
+                <CardContent className="feature-content">
+                  <CardDescription className="feature-description">
                     {feature.description}
                   </CardDescription>
                 </CardContent>
@@ -313,41 +292,37 @@ const Index = () => {
         </section>
 
         {/* Art Styles Section */}
-        <section className="py-20 relative">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl lg:text-5xl font-bold mb-4">
-              <span className="bg-gradient-to-r from-accent to-primary bg-clip-text text-transparent">
-                Stiluri de Artă
-              </span>
+        <section className="art-styles">
+          <div className="art-styles-header">
+            <h2 className="art-styles-title">
+              <span>Stiluri de Artă</span>
             </h2>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+            <p className="art-styles-description">
               Explorează diverse tehnici și stiluri artistice pentru a-ți dezvolta propriul stil unic
             </p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="art-styles-grid">
             {artStyles.map((style, index) => (
-              <Card key={index} className="group relative overflow-hidden border border-border/50 hover:border-accent/50 transition-all duration-500 hover:shadow-2xl hover:scale-105 bg-card/50 backdrop-blur-sm">
-                <div className="absolute inset-0 bg-gradient-to-br from-accent/10 to-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                <div className={`relative h-32 bg-gradient-to-br ${style.color} flex items-center justify-center overflow-hidden`}>
-                  <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-all duration-500"></div>
-                  <div className="relative w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform backdrop-blur-sm">
-                    <Brush className="w-8 h-8 text-white" />
+              <Card key={index} className="art-style-card">
+                <div className={`art-style-header bg-gradient-to-br ${style.color}`}>
+                  <div className="art-style-icon">
+                    <Brush />
                   </div>
                 </div>
-                <CardHeader className="relative">
-                  <div className="flex items-center justify-between mb-2">
-                    <CardTitle className="text-xl group-hover:text-accent transition-colors">{style.title}</CardTitle>
-                    <Badge className={`${getDifficultyColor(style.difficulty)} px-3 py-1 font-semibold border`}>
+                <CardHeader className="art-style-content">
+                  <div className="art-style-header-content">
+                    <CardTitle className="art-style-title">{style.title}</CardTitle>
+                    <Badge className={`art-style-badge ${style.difficulty.toLowerCase()}`}>
                       {style.difficulty}
                     </Badge>
                   </div>
-                  <CardDescription className="text-base leading-relaxed">
+                  <CardDescription className="art-style-description">
                     {style.description}
                   </CardDescription>
                 </CardHeader>
-                <CardContent className="relative">
-                  <Button variant="outline" className="w-full group-hover:bg-accent/10 group-hover:border-accent transition-colors">
-                    <Brush className="w-4 h-4 mr-2" />
+                <CardContent className="art-style-content">
+                  <Button variant="outline" className="art-style-button">
+                    <Brush />
                     Începe să practici
                   </Button>
                 </CardContent>
@@ -357,42 +332,41 @@ const Index = () => {
         </section>
 
         {/* Master Classes Section */}
-        <section className="py-20">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl lg:text-5xl font-bold mb-4">
-              <span className="bg-gradient-to-r from-foreground to-primary bg-clip-text text-transparent">
-                Masterclass-uri Exclusive
-              </span>
+        <section className="master-classes">
+          <div className="master-classes-header">
+            <h2 className="master-classes-title">
+              <span>Masterclass-uri Exclusive</span>
             </h2>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+            <p className="master-classes-description">
               Învață de la cei mai buni artiști și profesori de artă din România
             </p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="master-classes-grid">
             {masterClasses.map((masterClass, index) => (
-              <Card key={index} className="group relative text-center border border-border/50 hover:border-primary/50 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 overflow-hidden bg-card/50 backdrop-blur-sm">
-                <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-accent/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                <CardHeader className="relative">
-                  <div className="mx-auto w-16 h-16 bg-gradient-to-br from-primary/20 to-accent/20 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-lg">
-                    <Award className="w-8 h-8 text-primary" />
+              <Card key={index} className="master-class-card">
+                <CardHeader className="master-class-header">
+                  <div className="master-class-icon">
+                    <Award />
                   </div>
-                  <CardTitle className="text-lg font-bold group-hover:text-primary transition-colors">{masterClass.title}</CardTitle>
-                  <p className="text-sm text-muted-foreground mt-1">{masterClass.instructor}</p>
+                  <CardTitle className="master-class-title">{masterClass.title}</CardTitle>
+                  <p className="master-class-instructor">{masterClass.instructor}</p>
                 </CardHeader>
-                <CardContent className="relative space-y-4">
-                  <div className="flex justify-between items-center text-sm">
-                    <span className="text-muted-foreground">Durată:</span>
-                    <span className="font-medium">{masterClass.duration}</span>
+                <CardContent className="master-class-content">
+                  <div className="master-class-details">
+                    <div className="detail-item">
+                      <span className="detail-label">Durată:</span>
+                      <span className="detail-value">{masterClass.duration}</span>
+                    </div>
+                    <div className="detail-item">
+                      <span className="detail-label">Studenți:</span>
+                      <span className="detail-value">{masterClass.students.toLocaleString()}</span>
+                    </div>
                   </div>
-                  <div className="flex justify-between items-center text-sm">
-                    <span className="text-muted-foreground">Studenți:</span>
-                    <span className="font-medium">{masterClass.students.toLocaleString()}</span>
-                  </div>
-                  <Badge className={`${getDifficultyColor(masterClass.level)} px-3 py-1 font-semibold border`}>
+                  <Badge className={`master-class-badge ${masterClass.level.toLowerCase()}`}>
                     {masterClass.level}
                   </Badge>
-                  <Button className="w-full bg-gradient-to-r from-primary to-accent hover:opacity-90 transition-opacity mt-4">
-                    <Play className="w-4 h-4 mr-2" />
+                  <Button className="master-class-button">
+                    <Play />
                     Începe Masterclass-ul
                   </Button>
                 </CardContent>
@@ -426,34 +400,34 @@ const Index = () => {
       </div>
 
       {/* Footer */}
-      <footer className="border-t border-border bg-muted/20 py-12">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            <div>
-              <h3 className="font-bold text-lg mb-4">ArtsyLab</h3>
-              <p className="text-sm text-muted-foreground">
+      <footer className="footer">
+        <div className="footer-container">
+          <div className="footer-grid">
+            <div className="footer-section">
+              <h3>ArtsyLab</h3>
+              <p>
                 Platforma educațională pentru învățarea desenului artistic
               </p>
             </div>
-            <div>
-              <h4 className="font-semibold mb-4">Platformă</h4>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><a href="#" className="hover:text-foreground">Simulări</a></li>
-                <li><a href="#" className="hover:text-foreground">Probleme</a></li>
-                <li><a href="#" className="hover:text-foreground">Resurse</a></li>
+            <div className="footer-section">
+              <h4>Platformă</h4>
+              <ul>
+                <li><a href="#">Simulări</a></li>
+                <li><a href="#">Probleme</a></li>
+                <li><a href="#">Resurse</a></li>
               </ul>
             </div>
-            <div>
-              <h4 className="font-semibold mb-4">Resurse</h4>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><a href="#" className="hover:text-foreground">FAQ</a></li>
-                <li><a href="#" className="hover:text-foreground">Ajutor</a></li>
-                <li><a href="#" className="hover:text-foreground">Documentație</a></li>
+            <div className="footer-section">
+              <h4>Resurse</h4>
+              <ul>
+                <li><a href="#">FAQ</a></li>
+                <li><a href="#">Ajutor</a></li>
+                <li><a href="#">Documentație</a></li>
               </ul>
             </div>
-            <div>
-              <h4 className="font-semibold mb-4">Contact</h4>
-              <ul className="space-y-2 text-sm text-muted-foreground">
+            <div className="footer-section">
+              <h4>Contact</h4>
+              <ul>
                 <li>contact@artsylab.ro</li>
                 <li>+40 123 456 789</li>
               </ul>

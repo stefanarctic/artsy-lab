@@ -74,122 +74,115 @@ const Lessons = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="lessons-page">
       {/* Header */}
-      <header className="border-b border-border bg-background">
-        <div className="container mx-auto px-4 py-4">
+      <header className="lessons-header">
+        <div className="lessons-header-container">
           <Button 
             variant="ghost" 
             onClick={() => navigate("/")}
-            className="gap-2"
+            className="lessons-back-button"
           >
-            <ArrowLeft className="w-4 h-4" />
+            <ArrowLeft />
             Înapoi la pagina principală
           </Button>
         </div>
       </header>
 
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 mb-8">
-          <div>
-            <h1 className="text-4xl font-bold mb-2">Curriculum de desen portret</h1>
-            <p className="text-muted-foreground text-lg">
-              Progresează prin lecții structurate pentru a stăpâni desenul portretului
-            </p>
-          </div>
-          
-          <Card className="lg:w-80 shadow-card">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-lg">Progresul tău</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                <div className="flex justify-between text-sm">
-                  <span>Completate</span>
-                  <span>{completedLessons}/{lessons.length} lecții</span>
-                </div>
-                <Progress value={progressPercentage} className="h-2" />
-                <p className="text-xs text-muted-foreground">
-                  {Math.round(progressPercentage)}% complet
-                </p>
+      <div className="lessons-container">
+        <div className="lessons-content">
+          <div className="lessons-header-content">
+            <div className="lessons-title-section">
+              <h1>Curriculum de desen portret</h1>
+              <p>
+                Progresează prin lecții structurate pentru a stăpâni desenul portretului
+              </p>
+            </div>
+            
+            <div className="lessons-progress">
+              <div className="progress-info">
+                <span className="progress-text">Completate</span>
+                <span className="progress-percentage">{completedLessons}/{lessons.length} lecții</span>
               </div>
-            </CardContent>
-          </Card>
-        </div>
+              <div className="progress-bar">
+                <div className="progress-fill" style={{ width: `${progressPercentage}%` }}></div>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                {Math.round(progressPercentage)}% complet
+              </p>
+            </div>
+          </div>
 
-        {/* Lessons Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {lessons.map((lesson, index) => (
-            <Card 
-              key={lesson.id} 
-              className={`transition-all duration-300 shadow-card hover:shadow-lg ${
-                lesson.locked ? 'opacity-60' : ''
-              }`}
-            >
-              <CardHeader>
-                <div className="flex items-start justify-between">
-                  <div className="flex items-center gap-2">
+          {/* Lessons Grid */}
+          <div className="lessons-grid">
+            {lessons.map((lesson, index) => (
+              <Card 
+                key={lesson.id} 
+                className={`lesson-card ${
+                  lesson.locked ? 'opacity-60' : ''
+                }`}
+              >
+                <CardHeader className="lesson-header">
+                  <div className="lesson-status">
                     {lesson.completed ? (
-                      <CheckCircle className="w-6 h-6 text-green-500" />
+                      <CheckCircle className="completed" />
                     ) : lesson.locked ? (
-                      <Lock className="w-6 h-6 text-muted-foreground" />
+                      <Lock className="locked" />
                     ) : (
-                      <Circle className="w-6 h-6 text-muted-foreground" />
+                      <Circle className="available" />
                     )}
                     <div className="text-sm text-muted-foreground">
                       Lecția {index + 1}
                     </div>
                   </div>
-                  <Badge className={getDifficultyColor(lesson.difficulty)}>
+                  <Badge className={`lesson-difficulty ${lesson.difficulty.toLowerCase()}`}>
                     {lesson.difficulty}
                   </Badge>
-                </div>
-                <CardTitle className="text-xl">{lesson.title}</CardTitle>
-                <CardDescription className="text-base">
-                  {lesson.description}
+                </CardHeader>
+                
+                <CardContent className="lesson-content">
+                  <CardTitle className="lesson-title">{lesson.title}</CardTitle>
+                  <CardDescription className="lesson-description">
+                    {lesson.description}
+                  </CardDescription>
+                  <div className="lesson-meta">
+                    <span className="lesson-duration">{lesson.duration}</span>
+                    <Button 
+                      variant={lesson.completed ? "secondary" : "default"}
+                      size="sm"
+                      disabled={lesson.locked}
+                      onClick={() => handleStartLesson(lesson.id)}
+                      className="gap-2"
+                    >
+                      <Play />
+                      {lesson.completed ? "Revizuiește" : lesson.locked ? "Blocat" : "Începe"}
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          {/* Next Steps */}
+          <div className="mt-12 text-center">
+            <Card className="max-w-2xl mx-auto shadow-card">
+              <CardHeader>
+                <CardTitle className="text-2xl">Gata să începi să desenezi?</CardTitle>
+                <CardDescription className="text-lg">
+                  Începe cu fundamentele și avansează prin fiecare lecție în ritmul tău.
                 </CardDescription>
               </CardHeader>
-              
               <CardContent>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">
-                    {lesson.duration}
-                  </span>
-                  <Button 
-                    variant={lesson.completed ? "secondary" : "default"}
-                    size="sm"
-                    disabled={lesson.locked}
-                    onClick={() => handleStartLesson(lesson.id)}
-                    className="gap-2"
-                    >
-                      <Play className="w-4 h-4" />
-                      {lesson.completed ? "Revizuiește" : lesson.locked ? "Blocat" : "Începe"}
-                  </Button>
-                </div>
+                <Button 
+                  size="lg" 
+                  className="text-lg px-8 py-3"
+                  onClick={() => handleStartLesson("head-shape")}
+                >
+                  Începe prima lecție
+                </Button>
               </CardContent>
             </Card>
-          ))}
-        </div>
-
-        {/* Next Steps */}
-        <div className="mt-12 text-center">
-          <Card className="max-w-2xl mx-auto shadow-card">
-            <CardHeader>
-              <CardTitle className="text-2xl">Gata să începi să desenezi?</CardTitle>
-              <CardDescription className="text-lg">
-                Începe cu fundamentele și avansează prin fiecare lecție în ritmul tău.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Button 
-                size="lg" 
-                className="text-lg px-8 py-3"
-                onClick={() => handleStartLesson("head-shape")}
-              >
-                Începe prima lecție
-              </Button>
-            </CardContent>
-          </Card>
+          </div>
         </div>
       </div>
     </div>

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, forwardRef, useImperativeHandle } from "react";
 import { Canvas as FabricCanvas, Circle, Rect, PencilBrush, FabricImage } from "fabric";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -20,20 +20,41 @@ interface DrawingCanvasProps {
   lessonTitle: string;
   onNext?: () => void;
   onComplete?: (artwork: string) => void;
+  showReference?: boolean;
+  onToggleReference?: () => void;
+  activeColor?: string;
+  brushSize?: number;
 }
 
-export const DrawingCanvas = ({ 
+export const DrawingCanvas = forwardRef<any, DrawingCanvasProps>(({ 
   referenceImage, 
   lessonTitle, 
   onNext, 
-  onComplete 
-}: DrawingCanvasProps) => {
+  onComplete,
+  showReference: externalShowReference,
+  onToggleReference,
+  activeColor: externalActiveColor,
+  brushSize: externalBrushSize
+}, ref) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [fabricCanvas, setFabricCanvas] = useState<FabricCanvas | null>(null);
-  const [activeColor, setActiveColor] = useState("#000000");
-  const [brushSize, setBrushSize] = useState([2]);
-  const [showReference, setShowReference] = useState(true);
+  const [internalActiveColor, setInternalActiveColor] = useState("#000000");
+  const [internalBrushSize, setInternalBrushSize] = useState([2]);
+  const [internalShowReference, setInternalShowReference] = useState(true);
   const [isDrawing, setIsDrawing] = useState(false);
+
+  // Use external state if provided, otherwise use internal state
+  const showReference = externalShowReference !== undefined ? externalShowReference : internalShowReference;
+  const setShowReference = onToggleReference || setInternalShowReference;
+  const activeColor = externalActiveColor !== undefined ? externalActiveColor : internalActiveColor;
+  const brushSize = externalBrushSize !== undefined ? [externalBrushSize] : internalBrushSize;
+
+  // Expose methods through ref
+  useImperativeHandle(ref, () => ({
+    handleClear,
+    handleDownload,
+    handleComplete
+  }));
 
   const colors = [
     "#000000", "#444444", "#888888", "#cccccc",
@@ -57,7 +78,6 @@ export const DrawingCanvas = ({
     canvas.isDrawingMode = true;
 
     setFabricCanvas(canvas);
-    toast.success("Canvas ready! Start drawing!");
 
     return () => {
       canvas.dispose();
@@ -98,9 +118,19 @@ export const DrawingCanvas = ({
 
   const handleClear = () => {
     if (!fabricCanvas) return;
+    
+    // Store the current background image state
+    const currentBackgroundImage = fabricCanvas.backgroundImage;
+    
+    // Clear the canvas
     fabricCanvas.clear();
     fabricCanvas.backgroundColor = "#ffffff";
-    fabricCanvas.backgroundImage = null;
+    
+    // Restore the background image if reference should be shown
+    if (showReference && currentBackgroundImage) {
+      fabricCanvas.backgroundImage = currentBackgroundImage;
+    }
+    
     fabricCanvas.renderAll();
     toast.success("Canvas cleared!");
   };
@@ -138,154 +168,16 @@ export const DrawingCanvas = ({
   };
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 h-full">
+    <div className="h-full">
       {/* Canvas Area */}
-      <div className="lg:col-span-3">
-        <Card className="h-full">
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <div>
-                <CardTitle className="text-xl">{lessonTitle}</CardTitle>
-                <Badge variant="secondary" className="mt-2">
-                  Interactive Drawing Canvas
-                </Badge>
-              </div>
-              
-              <div className="flex items-center gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setShowReference(!showReference)}
-                  className="gap-2"
-                >
-                  {showReference ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                  {showReference ? "Hide" : "Show"} Reference
-                </Button>
-              </div>
-            </div>
-          </CardHeader>
-          
-          <CardContent>
-            <div className="border-2 border-border rounded-lg p-4 bg-canvas">
-              <canvas 
-                ref={canvasRef} 
-                className="border border-border rounded shadow-canvas max-w-full" 
-              />
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Tools Panel */}
-      <div className="space-y-6">
-        {/* Drawing Tools */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg flex items-center gap-2">
-              <Pencil className="w-5 h-5" />
-              Drawing Tools
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {/* Brush Size */}
-            <div>
-              <label className="text-sm font-medium">Brush Size: {brushSize[0]}px</label>
-              <Slider
-                value={brushSize}
-                onValueChange={setBrushSize}
-                min={1}
-                max={20}
-                step={1}
-                className="mt-2"
-              />
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Color Palette */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg flex items-center gap-2">
-              <Palette className="w-5 h-5" />
-              Colors
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-4 gap-2">
-              {colors.map((color) => (
-                <button
-                  key={color}
-                  className={`w-8 h-8 rounded-full border-2 transition-all ${
-                    activeColor === color ? 'border-primary scale-110' : 'border-border'
-                  }`}
-                  style={{ backgroundColor: color }}
-                  onClick={() => setActiveColor(color)}
-                />
-              ))}
-            </div>
-            
-            <div className="mt-4">
-              <label className="text-sm font-medium">Custom Color</label>
-              <input
-                type="color"
-                value={activeColor}
-                onChange={(e) => setActiveColor(e.target.value)}
-                className="w-full h-8 rounded border border-border mt-1"
-              />
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Actions */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">Actions</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <Button 
-              variant="outline" 
-              size="sm" 
-              onClick={handleClear}
-              className="w-full gap-2"
-            >
-              <RotateCcw className="w-4 h-4" />
-              Clear Canvas
-            </Button>
-            
-            <Button 
-              variant="secondary" 
-              size="sm" 
-              onClick={handleDownload}
-              className="w-full gap-2"
-            >
-              <Download className="w-4 h-4" />
-              Download PNG
-            </Button>
-            
-            {onComplete && (
-              <Button 
-                variant="default" 
-                size="sm" 
-                onClick={handleComplete}
-                className="w-full"
-              >
-                Complete Lesson
-              </Button>
-            )}
-            
-            {onNext && (
-              <Button 
-                variant="default" 
-                size="sm" 
-                onClick={onNext}
-                className="w-full"
-              >
-                Next Lesson
-              </Button>
-            )}
-          </CardContent>
-        </Card>
+      <div className="h-full">
+        <div className="border-2 border-border rounded-lg bg-canvas h-full flex items-center justify-center">
+          <canvas 
+            ref={canvasRef} 
+            className="max-w-full" 
+          />
+        </div>
       </div>
     </div>
   );
-};
+});

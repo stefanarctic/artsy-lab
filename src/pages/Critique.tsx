@@ -86,25 +86,27 @@ const Critique = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-canvas">
-      <div className="container mx-auto px-4 py-8">
+    <div className="critique-page">
+      <div className="critique-content">
         {/* Header */}
-        <div className="mb-6">
-          <Button 
-            variant="ghost" 
-            onClick={() => navigate("/lessons")}
-            className="mb-4 gap-2"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Back to Lessons
-          </Button>
-          
-          <div className="text-center">
-            <h1 className="text-4xl font-bold mb-2">AI Art Critique</h1>
-            <p className="text-muted-foreground text-lg">
-              Get personalized feedback to improve your artistic skills
-            </p>
+        <header className="critique-header">
+          <div className="critique-header-container">
+            <Button 
+              variant="ghost" 
+              onClick={() => navigate("/lessons")}
+              className="critique-back-button"
+            >
+              <ArrowLeft />
+              Back to Lessons
+            </Button>
           </div>
+        </header>
+
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-bold mb-2">AI Art Critique</h1>
+          <p className="text-muted-foreground text-lg">
+            Get personalized feedback to improve your artistic skills
+          </p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
