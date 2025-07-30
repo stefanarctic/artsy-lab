@@ -78,7 +78,6 @@ export const DrawingCanvas = forwardRef<any, DrawingCanvasProps>(({
     canvas.isDrawingMode = true;
 
     setFabricCanvas(canvas);
-    toast.success("Canvas ready! Start drawing!");
 
     return () => {
       canvas.dispose();
@@ -119,9 +118,19 @@ export const DrawingCanvas = forwardRef<any, DrawingCanvasProps>(({
 
   const handleClear = () => {
     if (!fabricCanvas) return;
+    
+    // Store the current background image state
+    const currentBackgroundImage = fabricCanvas.backgroundImage;
+    
+    // Clear the canvas
     fabricCanvas.clear();
     fabricCanvas.backgroundColor = "#ffffff";
-    fabricCanvas.backgroundImage = null;
+    
+    // Restore the background image if reference should be shown
+    if (showReference && currentBackgroundImage) {
+      fabricCanvas.backgroundImage = currentBackgroundImage;
+    }
+    
     fabricCanvas.renderAll();
     toast.success("Canvas cleared!");
   };

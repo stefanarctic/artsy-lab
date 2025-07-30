@@ -206,7 +206,7 @@ const Canvas = () => {
               className="back-button"
             >
               <ArrowLeft />
-              ← Înapoi la lecții
+              Înapoi la lecții
             </Button>
 
             <div className="sidebar-section">
@@ -337,10 +337,16 @@ const Canvas = () => {
                 </div>
                 <div className="custom-color">
                   <label>Custom Color</label>
-                  <div 
+                  <input
+                    type="color"
+                    value={activeColor}
+                    onChange={(e) => handleColorChange(e.target.value)}
+                    className="custom-color-input"
+                  />
+                  {/* <div 
                     className="custom-color-swatch"
                     style={{ backgroundColor: activeColor }}
-                  ></div>
+                  ></div> */}
                 </div>
               </div>
             </div>
