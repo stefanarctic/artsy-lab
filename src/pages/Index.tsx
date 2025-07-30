@@ -97,10 +97,10 @@ const Index = () => {
 
   const getDifficultyColor = (difficulty: string) => {
     switch(difficulty) {
-      case "Începător": return "bg-green-100 text-green-800";
-      case "Intermediar": return "bg-yellow-100 text-yellow-800";
-      case "Avansat": return "bg-red-100 text-red-800";
-      default: return "bg-gray-100 text-gray-800";
+      case "Începător": return "bg-green-500/10 text-green-700 dark:text-green-400";
+      case "Intermediar": return "bg-yellow-500/10 text-yellow-700 dark:text-yellow-400";
+      case "Avansat": return "bg-red-500/10 text-red-700 dark:text-red-400";
+      default: return "bg-muted text-muted-foreground";
     }
   };
 
@@ -158,7 +158,7 @@ const Index = () => {
             </div>
             <div className="flex justify-center">
               <div className="relative">
-                <div className="w-64 h-64 bg-gray-100 rounded-lg flex items-center justify-center">
+                <div className="w-64 h-64 bg-muted rounded-lg flex items-center justify-center">
                   <img 
                     src={artIcon} 
                     alt="Art Icon"
@@ -198,7 +198,7 @@ const Index = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {simulations.map((sim, index) => (
               <Card key={index} className="overflow-hidden border border-border shadow-card hover:shadow-lg transition-shadow">
-                <div className="h-48 bg-gray-100"></div>
+                <div className="h-48 bg-muted"></div>
                 <CardHeader>
                   <div className="flex items-center justify-between">
                     <CardTitle className="text-xl">{sim.title}</CardTitle>

@@ -104,7 +104,7 @@ All colors MUST be HSL for consistency.
     
     --canvas: 0 0% 12%;
     --canvas-foreground: 0 0% 95%;
-  }
+    
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
     --sidebar-primary: 224.3 76.3% 48%;
@@ -123,5 +123,19 @@ All colors MUST be HSL for consistency.
 
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+@layer components {
+  .shadow-canvas {
+    box-shadow: var(--shadow-card);
+  }
+  
+  .bg-gradient-canvas {
+    background: linear-gradient(135deg, hsl(var(--background)) 0%, hsl(var(--muted)) 100%);
+  }
+  
+  .bg-gradient-secondary {
+    background: linear-gradient(135deg, hsl(var(--secondary)) 0%, hsl(var(--accent)) 100%);
   }
 }
