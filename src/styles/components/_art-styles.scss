@@ -1,0 +1,196 @@
+// Art styles section styles
+.art-styles {
+  padding: 5rem 0;
+  position: relative;
+  
+  .art-styles-header {
+    text-align: center;
+    margin-bottom: 4rem;
+    
+    .art-styles-title {
+      font-size: 2.25rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      
+      @media (min-width: 1024px) {
+        font-size: 3rem;
+      }
+      
+      span {
+        background: linear-gradient(to right, var(--accent), var(--primary));
+        background-clip: text;
+        -webkit-background-clip: text;
+        color: transparent;
+      }
+    }
+    
+    .art-styles-description {
+      font-size: 1.25rem;
+      color: var(--muted-foreground);
+      max-width: 42rem;
+      margin: 0 auto;
+    }
+  }
+  
+  .art-styles-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    
+    @media (min-width: 768px) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  
+  .art-style-card {
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(226, 232, 240, 0.5);
+    border-radius: $radius-lg;
+    transition: all $transition-slow;
+    background-color: rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(4px);
+    
+    &:hover {
+      border-color: rgba(139, 92, 246, 0.5);
+      box-shadow: $shadow-2xl;
+      transform: scale(1.05);
+    }
+    
+    &::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom right, rgba(139, 92, 246, 0.1), rgba(59, 130, 246, 0.1));
+      opacity: 0;
+      transition: opacity $transition-slow;
+    }
+    
+    &:hover::before {
+      opacity: 1;
+    }
+    
+    .art-style-header {
+      position: relative;
+      height: 8rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      
+      &::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background-color: rgba(0, 0, 0, 0.2);
+        transition: background-color $transition-slow;
+      }
+      
+      &:hover::before {
+        background-color: rgba(0, 0, 0, 0.1);
+      }
+      
+      .art-style-icon {
+        position: relative;
+        width: 4rem;
+        height: 4rem;
+        background-color: rgba(255, 255, 255, 0.2);
+        border-radius: $radius-2xl;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: $shadow-xl;
+        transition: transform $transition-normal;
+        backdrop-filter: blur(4px);
+        
+        svg {
+          width: 2rem;
+          height: 2rem;
+          color: white;
+        }
+      }
+      
+      &:hover .art-style-icon {
+        transform: scale(1.1);
+      }
+    }
+    
+    .art-style-content {
+      position: relative;
+      padding: 1.5rem;
+      
+      .art-style-header-content {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 0.5rem;
+        
+        .art-style-title {
+          font-size: 1.25rem;
+          font-weight: 700;
+          transition: color $transition-normal;
+          
+          &:hover {
+            color: var(--accent);
+          }
+        }
+        
+        .art-style-badge {
+          padding: 0.25rem 0.75rem;
+          font-weight: 600;
+          border: 1px solid;
+          border-radius: $radius-md;
+          
+          &.beginner {
+            background-color: rgba(16, 185, 129, 0.1);
+            color: #047857;
+            border-color: rgba(16, 185, 129, 0.3);
+          }
+          
+          &.intermediate {
+            background-color: rgba(245, 158, 11, 0.1);
+            color: #d97706;
+            border-color: rgba(245, 158, 11, 0.3);
+          }
+          
+          &.advanced {
+            background-color: rgba(239, 68, 68, 0.1);
+            color: #dc2626;
+            border-color: rgba(239, 68, 68, 0.3);
+          }
+        }
+      }
+      
+      .art-style-description {
+        font-size: 1rem;
+        line-height: 1.625;
+        margin-bottom: 1.5rem;
+      }
+      
+      .art-style-button {
+        width: 100%;
+        border: 1px solid var(--border);
+        background-color: transparent;
+        color: var(--foreground);
+        padding: 0.75rem 1rem;
+        border-radius: $radius-md;
+        font-weight: 500;
+        transition: all $transition-normal;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        
+        &:hover {
+          background-color: rgba(139, 92, 246, 0.1);
+          border-color: var(--accent);
+        }
+        
+        svg {
+          width: 1rem;
+          height: 1rem;
+        }
+      }
+    }
+  }
+} 

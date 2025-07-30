@@ -1,0 +1,142 @@
+// Header component styles
+.header {
+  position: relative;
+  border-bottom: 1px solid var(--border);
+  backdrop-filter: blur(24px);
+  background-color: rgba(255, 255, 255, 0.95);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to right, 
+      rgba(59, 130, 246, 0.05), 
+      transparent, 
+      rgba(139, 92, 246, 0.05)
+    );
+  }
+  
+  .header-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 $spacing-lg;
+    position: relative;
+  }
+  
+  .header-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: $spacing-md 0;
+  }
+  
+  .header-brand {
+    display: flex;
+    align-items: center;
+    gap: $spacing-md;
+  }
+  
+  .header-logo {
+    position: relative;
+    
+    .logo-icon {
+      width: 2.5rem;
+      height: 2.5rem;
+      background: linear-gradient(to bottom right, var(--primary), var(--accent), var(--secondary));
+      border-radius: $radius-2xl;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: $shadow-lg;
+      
+      svg {
+        width: 1.5rem;
+        height: 1.5rem;
+        color: white;
+      }
+    }
+    
+    .logo-dot {
+      position: absolute;
+      top: -0.25rem;
+      right: -0.25rem;
+      width: 1rem;
+      height: 1rem;
+      background-color: var(--accent);
+      border-radius: 50%;
+      animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+  }
+  
+  .header-title {
+    h1 {
+      font-size: 1.5rem;
+      font-weight: 900;
+      background: linear-gradient(to right, var(--primary), var(--accent), var(--secondary));
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+    
+    p {
+      font-size: 0.75rem;
+      color: var(--muted-foreground);
+      margin-top: -0.25rem;
+    }
+  }
+  
+  .header-nav-links {
+    display: none;
+    align-items: center;
+    gap: $spacing-2xl;
+    
+    @media (min-width: 1024px) {
+      display: flex;
+    }
+    
+    a {
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--foreground);
+      text-decoration: none;
+      transition: color $transition-normal;
+      position: relative;
+      
+      &:hover {
+        color: var(--primary);
+      }
+      
+      &::after {
+        content: '';
+        position: absolute;
+        bottom: -0.25rem;
+        left: 0;
+        width: 0;
+        height: 0.125rem;
+        background-color: var(--primary);
+        transition: width $transition-normal;
+      }
+      
+      &:hover::after {
+        width: 100%;
+      }
+    }
+  }
+  
+  .header-button {
+    background: linear-gradient(to right, var(--primary), var(--accent));
+    color: white;
+    font-weight: 500;
+    padding: 0.5rem 1.5rem;
+    border-radius: $radius-md;
+    box-shadow: $shadow-lg;
+    transition: all $transition-normal;
+    
+    &:hover {
+      box-shadow: $shadow-xl;
+    }
+  }
+} 

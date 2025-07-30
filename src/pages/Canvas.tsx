@@ -1,8 +1,9 @@
 import { useParams, useNavigate } from "react-router-dom";
+import { useState, useRef } from "react";
 import { DrawingCanvas } from "@/components/DrawingCanvas";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft, Target, Lightbulb } from "lucide-react";
+import { ArrowLeft, Target, Lightbulb, Eye, EyeOff, RefreshCw, Download, Palette, Settings, Pencil } from "lucide-react";
 
 // Import reference images
 import headShapeRef from "@/assets/reference-head-shape.png";
@@ -22,6 +23,10 @@ interface LessonData {
 const Canvas = () => {
   const { lessonId } = useParams();
   const navigate = useNavigate();
+  const [showReference, setShowReference] = useState(true);
+  const [brushSize, setBrushSize] = useState(2);
+  const [activeColor, setActiveColor] = useState("#000000");
+  const drawingCanvasRef = useRef<any>(null);
 
   const lessonsData: Record<string, LessonData> = {
     "head-shape": {
@@ -144,74 +149,248 @@ const Canvas = () => {
     }
   };
 
+  const handleClearCanvas = () => {
+    if (drawingCanvasRef.current) {
+      drawingCanvasRef.current.handleClear();
+    }
+  };
+
+  const handleDownloadCanvas = () => {
+    if (drawingCanvasRef.current) {
+      drawingCanvasRef.current.handleDownload();
+    }
+  };
+
+  const handleCompleteLesson = () => {
+    if (drawingCanvasRef.current) {
+      drawingCanvasRef.current.handleComplete();
+    }
+  };
+
+  const handleNextLesson = () => {
+    handleNext();
+  };
+
+  const handleColorChange = (color: string) => {
+    setActiveColor(color);
+  };
+
   return (
-    <div className="min-h-screen bg-background">
+    <div className="canvas-page">
       {/* Header */}
-      <header className="border-b border-border bg-background">
-        <div className="container mx-auto px-4 py-4">
+      <header className="canvas-header">
+        <div className="canvas-header-container">
+          <div className="canvas-title-section">
+            <h1 className="canvas-title">{currentLesson.title}</h1>
+            <p className="canvas-subtitle">Interactive Drawing Canvas</p>
+          </div>
           <Button 
-            variant="ghost" 
-            onClick={() => navigate("/lessons")}
-            className="gap-2"
+            variant="outline" 
+            size="sm" 
+            className="hide-reference-btn"
+            onClick={() => setShowReference(!showReference)}
           >
-            <ArrowLeft className="w-4 h-4" />
-            Înapoi la lecții
+            {showReference ? <Eye className="w-4 h-4 mr-2" /> : <EyeOff className="w-4 h-4 mr-2" />}
+            {showReference ? "Hide" : "Show"} Reference
           </Button>
         </div>
       </header>
 
-      <div className="container mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 xl:grid-cols-5 gap-6">
-          {/* Lesson Info Sidebar */}
-          <div className="xl:col-span-1 space-y-6">
-            {/* Objectives */}
-            <Card className="shadow-card">
-              <CardHeader>
-                <CardTitle className="text-lg flex items-center gap-2">
-                  <Target className="w-5 h-5" />
-                  Obiective
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <ul className="space-y-2">
-                  {currentLesson.objectives.map((objective, index) => (
-                    <li key={index} className="flex items-start gap-2 text-sm">
-                      <div className="w-1.5 h-1.5 bg-primary rounded-full mt-2 flex-shrink-0"></div>
-                      {objective}
-                    </li>
-                  ))}
-                </ul>
-              </CardContent>
-            </Card>
+      <div className="canvas-content">
+        <div className="canvas-layout">
+          {/* Left Column - Lesson Information */}
+          <div className="canvas-sidebar">
+            <Button 
+              variant="ghost" 
+              onClick={() => navigate("/lessons")}
+              className="back-button"
+            >
+              <ArrowLeft />
+              Înapoi la lecții
+            </Button>
 
-            {/* Tips */}
-            <Card className="shadow-card">
-              <CardHeader>
-                <CardTitle className="text-lg flex items-center gap-2">
-                  <Lightbulb className="w-5 h-5" />
-                  Sfaturi
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <ul className="space-y-2">
-                  {currentLesson.tips.map((tip, index) => (
-                    <li key={index} className="text-sm text-muted-foreground">
-                      💡 {tip}
-                    </li>
+            <div className="sidebar-section">
+              <div className="sidebar-header">
+                <Target className="w-5 h-5" />
+                <h3>Obiective</h3>
+              </div>
+              <div className="sidebar-content">
+                <ul className="objectives-list">
+                  {currentLesson.objectives.map((objective, index) => (
+                    <li key={index}>{objective}</li>
                   ))}
                 </ul>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
+
+            <div className="sidebar-section">
+              <div className="sidebar-header">
+                <Lightbulb className="w-5 h-5" />
+                <h3>Sfaturi</h3>
+              </div>
+              <div className="sidebar-content">
+                <ul className="tips-list">
+                  {currentLesson.tips.map((tip, index) => (
+                    <li key={index}>{tip}</li>
+                  ))}
+                </ul>
+              </div>
+            </div>
           </div>
 
-          {/* Canvas Area */}
-          <div className="xl:col-span-4">
-            <DrawingCanvas
-              referenceImage={currentLesson.referenceImage}
-              lessonTitle={currentLesson.title}
-              onNext={handleNext}
-              onComplete={handleComplete}
-            />
+          {/* Center Column - Drawing Canvas */}
+          <div className="canvas-main">
+            <div className="canvas-container">
+              <div className="canvas-area">
+                <DrawingCanvas
+                  ref={drawingCanvasRef}
+                  referenceImage={currentLesson.referenceImage}
+                  lessonTitle={currentLesson.title}
+                  onNext={handleNext}
+                  onComplete={handleComplete}
+                  showReference={showReference}
+                  onToggleReference={() => setShowReference(!showReference)}
+                  activeColor={activeColor}
+                  brushSize={brushSize}
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Right Column - Tools and Actions */}
+          <div className="canvas-tools-sidebar">
+            <div className="sidebar-section">
+              <div className="sidebar-header">
+                <Pencil className="w-5 h-5" />
+                <h3>Drawing Tools</h3>
+              </div>
+              <div className="sidebar-content">
+                <div className="tool-control">
+                  <label>Brush Size: {brushSize}px</label>
+                  <input 
+                    type="range" 
+                    min="1" 
+                    max="20" 
+                    value={brushSize}
+                    onChange={(e) => setBrushSize(Number(e.target.value))}
+                    className="brush-slider" 
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="sidebar-section">
+              <div className="sidebar-header">
+                <Palette className="w-5 h-5" />
+                <h3>Colors</h3>
+              </div>
+              <div className="sidebar-content">
+                <div className="color-palette">
+                  <div 
+                    className={`color-swatch black ${activeColor === '#000000' ? 'active' : ''}`}
+                    onClick={() => handleColorChange('#000000')}
+                  ></div>
+                  <div 
+                    className={`color-swatch dark-grey ${activeColor === '#444444' ? 'active' : ''}`}
+                    onClick={() => handleColorChange('#444444')}
+                  ></div>
+                  <div 
+                    className={`color-swatch medium-grey ${activeColor === '#888888' ? 'active' : ''}`}
+                    onClick={() => handleColorChange('#888888')}
+                  ></div>
+                  <div 
+                    className={`color-swatch light-grey ${activeColor === '#cccccc' ? 'active' : ''}`}
+                    onClick={() => handleColorChange('#cccccc')}
+                  ></div>
+                  <div 
+                    className={`color-swatch white ${activeColor === '#ffffff' ? 'active' : ''}`}
+                    onClick={() => handleColorChange('#ffffff')}
+                  ></div>
+                  <div 
+                    className={`color-swatch very-light-grey ${activeColor === '#f0f0f0' ? 'active' : ''}`}
+                    onClick={() => handleColorChange('#f0f0f0')}
+                  ></div>
+                  <div 
+                    className={`color-swatch dark-brown ${activeColor === '#8B4513' ? 'active' : ''}`}
+                    onClick={() => handleColorChange('#8B4513')}
+                  ></div>
+                  <div 
+                    className={`color-swatch orange ${activeColor === '#D2691E' ? 'active' : ''}`}
+                    onClick={() => handleColorChange('#D2691E')}
+                  ></div>
+                  <div 
+                    className={`color-swatch light-brown ${activeColor === '#CD853F' ? 'active' : ''}`}
+                    onClick={() => handleColorChange('#CD853F')}
+                  ></div>
+                  <div 
+                    className={`color-swatch light-orange ${activeColor === '#F4A460' ? 'active' : ''}`}
+                    onClick={() => handleColorChange('#F4A460')}
+                  ></div>
+                  <div 
+                    className={`color-swatch teal ${activeColor === '#4ECDC4' ? 'active' : ''}`}
+                    onClick={() => handleColorChange('#4ECDC4')}
+                  ></div>
+                  <div 
+                    className={`color-swatch light-blue ${activeColor === '#45B7D1' ? 'active' : ''}`}
+                    onClick={() => handleColorChange('#45B7D1')}
+                  ></div>
+                </div>
+                <div className="custom-color">
+                  <label>Custom Color</label>
+                  <input
+                    type="color"
+                    value={activeColor}
+                    onChange={(e) => handleColorChange(e.target.value)}
+                    className="custom-color-input"
+                  />
+                  {/* <div 
+                    className="custom-color-swatch"
+                    style={{ backgroundColor: activeColor }}
+                  ></div> */}
+                </div>
+              </div>
+            </div>
+
+            <div className="sidebar-section">
+              <div className="sidebar-header">
+                <Settings className="w-5 h-5" />
+                <h3>Actions</h3>
+              </div>
+              <div className="sidebar-content">
+                <div className="action-buttons">
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="action-btn"
+                    onClick={handleClearCanvas}
+                  >
+                    <RefreshCw className="w-4 h-4 mr-2" />
+                    Clear Canvas
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="action-btn"
+                    onClick={handleDownloadCanvas}
+                  >
+                    <Download className="w-4 h-4 mr-2" />
+                    Download PNG
+                  </Button>
+                  <Button 
+                    className="action-btn primary"
+                    onClick={handleCompleteLesson}
+                  >
+                    Complete Lesson
+                  </Button>
+                  <Button 
+                    className="action-btn primary"
+                    onClick={handleNextLesson}
+                  >
+                    Next Lesson
+                  </Button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

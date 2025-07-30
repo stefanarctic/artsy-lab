@@ -1,0 +1,13 @@
+// Main SCSS file - imports all component styles
+@import 'variables';
+@import 'base';
+@import 'components/header';
+@import 'components/hero';
+@import 'components/features';
+@import 'components/art-styles';
+@import 'components/master-classes';
+@import 'components/footer';
+@import 'components/lessons';
+@import 'components/canvas';
+@import 'components/critique';
+@import 'components/not-found'; 
