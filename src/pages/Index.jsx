@@ -1,6 +1,6 @@
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button.jsx";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card.jsx";
+import { Badge } from "@/components/ui/badge.jsx";
 import { useNavigate } from "react-router-dom";
 import { 
   BookOpen, 
@@ -76,7 +76,6 @@ const Index = () => {
 
   const masterClasses = [
     {
-      id: "fundamentele-portretului",
       title: "Fundamentele Portretului",
       instructor: "Prof. Maria Ionescu",
       duration: "2h 30min",
@@ -84,7 +83,6 @@ const Index = () => {
       level: "Începător"
     },
     {
-      id: "lumina-si-umbra-avansata",
       title: "Lumină și Umbră Avansată",
       instructor: "Prof. Alexandru Pop", 
       duration: "3h 15min",
@@ -92,7 +90,6 @@ const Index = () => {
       level: "Avansat"
     },
     {
-      id: "texturi-si-materiale",
       title: "Texturi și Materiale",
       instructor: "Prof. Elena Radu",
       duration: "2h 45min", 
@@ -307,7 +304,7 @@ const Index = () => {
           <div className="art-styles-grid">
             {artStyles.map((style, index) => (
               <Card key={index} className="art-style-card">
-                <div className={`art-style-header bg-gradient-to-br ${style.color}`}>
+                <div className={art-style-header bg-gradient-to-br ${style.color}}>
                   <div className="art-style-icon">
                     <Brush />
                   </div>
@@ -315,7 +312,7 @@ const Index = () => {
                 <CardHeader className="art-style-content">
                   <div className="art-style-header-content">
                     <CardTitle className="art-style-title">{style.title}</CardTitle>
-                    <Badge className={`art-style-badge ${style.difficulty.toLowerCase()}`}>
+                    <Badge className={art-style-badge ${style.difficulty.toLowerCase()}}>
                       {style.difficulty}
                     </Badge>
                   </div>
@@ -365,13 +362,10 @@ const Index = () => {
                       <span className="detail-value">{masterClass.students.toLocaleString()}</span>
                     </div>
                   </div>
-                  <Badge className={`master-class-badge ${masterClass.level.toLowerCase()}`}>
+                  <Badge className={master-class-badge ${masterClass.level.toLowerCase()}}>
                     {masterClass.level}
                   </Badge>
-                  <Button 
-                    className="master-class-button"
-                    onClick={() => navigate(`/canvas/${masterClass.id}`)}
-                  >
+                  <Button className="master-class-button">
                     <Play />
                     Începe Masterclass-ul
                   </Button>
@@ -398,12 +392,7 @@ const Index = () => {
               combină expertiza instructorilor cu puterea inteligenței artificiale pentru a oferi 
               o experiență de învățare personalizată și captivantă.
             </p>
-            <Button 
-              size="lg" 
-              variant="outline" 
-              className="border-2 border-primary/20 hover:border-primary hover:bg-primary/10"
-              onClick={() => navigate("/about")}
-            >
+            <Button size="lg" variant="outline" className="border-2 border-primary/20 hover:border-primary hover:bg-primary/10">
               Descoperă Povestea Noastră
             </Button>
           </div>

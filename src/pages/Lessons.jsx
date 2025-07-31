@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
-import { Badge } from "@/components/ui/badge";
-import { CheckCircle, Circle, Play, Lock, ArrowLeft, Sparkles, BookOpen, Clock, Target } from "lucide-react";
+import { Button } from "@/components/ui/button.jsx";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card.jsx";
+import { Progress } from "@/components/ui/progress.jsx";
+import { Badge } from "@/components/ui/badge.jsx";
+import { CheckCircle, Circle, Play, Lock, ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const Lessons = () => {
@@ -16,8 +16,7 @@ const Lessons = () => {
       difficulty: "Începător",
       duration: "15 min",
       completed: false,
-      locked: false,
-      icon: "🎨"
+      locked: false
     },
     {
       id: "eyes",
@@ -26,8 +25,7 @@ const Lessons = () => {
       difficulty: "Începător",
       duration: "20 min",
       completed: false,
-      locked: true,
-      icon: "👁️"
+      locked: true
     },
     {
       id: "nose",
@@ -36,8 +34,7 @@ const Lessons = () => {
       difficulty: "Intermediar",
       duration: "18 min",
       completed: false,
-      locked: true,
-      icon: "👃"
+      locked: true
     },
     {
       id: "mouth",
@@ -46,8 +43,7 @@ const Lessons = () => {
       difficulty: "Intermediar",
       duration: "22 min",
       completed: false,
-      locked: true,
-      icon: "👄"
+      locked: true
     }
   ]);
 
@@ -55,27 +51,20 @@ const Lessons = () => {
   const progressPercentage = (completedLessons / lessons.length) * 100;
 
   const handleStartLesson = (lessonId) => {
-    navigate(`/canvas/${lessonId}`);
+    navigate(/canvas/${lessonId});
   };
 
   const getDifficultyColor = (difficulty) => {
     switch (difficulty) {
-      case "Începător": return "bg-green-500/10 text-green-700 dark:text-green-400 border-green-500/20";
-      case "Intermediar": return "bg-yellow-500/10 text-yellow-700 dark:text-yellow-400 border-yellow-500/20";
-      case "Avansat": return "bg-red-500/10 text-red-700 dark:text-red-400 border-red-500/20";
+      case "Începător": return "bg-green-500/10 text-green-700 dark:text-green-400";
+      case "Intermediar": return "bg-yellow-500/10 text-yellow-700 dark:text-yellow-400";
+      case "Avansat": return "bg-red-500/10 text-red-700 dark:text-red-400";
       default: return "bg-muted text-muted-foreground";
     }
   };
 
   return (
     <div className="lessons-page">
-      {/* Background Elements */}
-      <div className="lessons-background">
-        <div className="bg-element-1"></div>
-        <div className="bg-element-2"></div>
-        <div className="bg-element-3"></div>
-      </div>
-
       {/* Header */}
       <header className="lessons-header">
         <div className="lessons-header-container">
@@ -94,24 +83,19 @@ const Lessons = () => {
         <div className="lessons-content">
           <div className="lessons-header-content">
             <div className="lessons-title-section">
-              <div className="lessons-badge">
-                <Sparkles />
-                <span>Curriculum de desen portret</span>
-              </div>
-              <h1>Învață să desenezi portrete</h1>
+              <h1>Curriculum de desen portret</h1>
               <p>
-                Progresează prin lecții structurate pentru a stăpâni arta desenului portretului. 
-                Fiecare lecție te va ghida pas cu pas spre realizarea unor portrete realiste.
+                Progresează prin lecții structurate pentru a stăpâni desenul portretului
               </p>
             </div>
             
             <div className="lessons-progress">
               <div className="progress-info">
-                <span className="progress-text">Progresul tău</span>
+                <span className="progress-text">Completate</span>
                 <span className="progress-percentage">{completedLessons}/{lessons.length} lecții</span>
               </div>
               <div className="progress-bar">
-                <div className="progress-fill" style={{ width: `${progressPercentage}%` }}></div>
+                <div className="progress-fill" style={{ width: ${progressPercentage}% }}></div>
               </div>
               <p className="text-xs text-muted-foreground">
                 {Math.round(progressPercentage)}% complet
@@ -125,19 +109,23 @@ const Lessons = () => {
               <Card 
                 key={lesson.id} 
                 className={`lesson-card ${
-                  lesson.locked ? 'lesson-locked' : lesson.completed ? 'lesson-completed' : 'lesson-available'
+                  lesson.locked ? 'opacity-60' : ''
                 }`}
               >
                 <CardHeader className="lesson-header">
                   <div className="lesson-status">
-                    <div className="lesson-icon">
-                      {lesson.icon}
-                    </div>
-                    <div className="lesson-number">
+                    {lesson.completed ? (
+                      <CheckCircle className="completed" />
+                    ) : lesson.locked ? (
+                      <Lock className="locked" />
+                    ) : (
+                      <Circle className="available" />
+                    )}
+                    <div className="text-sm text-muted-foreground">
                       Lecția {index + 1}
                     </div>
                   </div>
-                  <Badge className={`lesson-difficulty ${getDifficultyColor(lesson.difficulty)}`}>
+                  <Badge className={lesson-difficulty ${lesson.difficulty.toLowerCase()}}>
                     {lesson.difficulty}
                   </Badge>
                 </CardHeader>
@@ -148,33 +136,16 @@ const Lessons = () => {
                     {lesson.description}
                   </CardDescription>
                   <div className="lesson-meta">
-                    <div className="lesson-duration">
-                      <Clock className="duration-icon" />
-                      <span>{lesson.duration}</span>
-                    </div>
+                    <span className="lesson-duration">{lesson.duration}</span>
                     <Button 
                       variant={lesson.completed ? "secondary" : "default"}
                       size="sm"
                       disabled={lesson.locked}
                       onClick={() => handleStartLesson(lesson.id)}
-                      className="lesson-button"
+                      className="gap-2"
                     >
-                      {lesson.completed ? (
-                        <>
-                          <CheckCircle />
-                          Revizuiește
-                        </>
-                      ) : lesson.locked ? (
-                        <>
-                          <Lock />
-                          Blocat
-                        </>
-                      ) : (
-                        <>
-                          <Play />
-                          Începe
-                        </>
-                      )}
+                      <Play />
+                      {lesson.completed ? "Revizuiește" : lesson.locked ? "Blocat" : "Începe"}
                     </Button>
                   </div>
                 </CardContent>
@@ -183,24 +154,24 @@ const Lessons = () => {
           </div>
 
           {/* Next Steps */}
-          <div className="lessons-cta">
-            <div className="cta-content">
-              <div className="cta-text">
-                <h2>Gata să începi să desenezi?</h2>
-                <p>
-                  Începe cu fundamentele și avansează prin fiecare lecție în ritmul tău. 
-                  Fiecare pas te aduce mai aproape de a stăpâni arta desenului portretului.
-                </p>
-              </div>
-              <Button 
-                size="lg" 
-                className="cta-button"
-                onClick={() => handleStartLesson("head-shape")}
-              >
-                <BookOpen />
-                Începe prima lecție
-              </Button>
-            </div>
+          <div className="mt-12 text-center">
+            <Card className="max-w-2xl mx-auto shadow-card">
+              <CardHeader>
+                <CardTitle className="text-2xl">Gata să începi să desenezi?</CardTitle>
+                <CardDescription className="text-lg">
+                  Începe cu fundamentele și avansează prin fiecare lecție în ritmul tău.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Button 
+                  size="lg" 
+                  className="text-lg px-8 py-3"
+                  onClick={() => handleStartLesson("head-shape")}
+                >
+                  Începe prima lecție
+                </Button>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </div>
@@ -208,4 +179,4 @@ const Lessons = () => {
   );
 };
 
-export default Lessons; 
+export default Lessons;
