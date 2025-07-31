@@ -304,7 +304,7 @@ const Index = () => {
           <div className="art-styles-grid">
             {artStyles.map((style, index) => (
               <Card key={index} className="art-style-card">
-                <div className={art-style-header bg-gradient-to-br ${style.color}}>
+                <div className={`art-style-header bg-gradient-to-br ${style.color}`}>
                   <div className="art-style-icon">
                     <Brush />
                   </div>
@@ -312,7 +312,7 @@ const Index = () => {
                 <CardHeader className="art-style-content">
                   <div className="art-style-header-content">
                     <CardTitle className="art-style-title">{style.title}</CardTitle>
-                    <Badge className={art-style-badge ${style.difficulty.toLowerCase()}}>
+                    <Badge className={`art-style-badge ${style.difficulty.toLowerCase()}`}>
                       {style.difficulty}
                     </Badge>
                   </div>
@@ -362,7 +362,7 @@ const Index = () => {
                       <span className="detail-value">{masterClass.students.toLocaleString()}</span>
                     </div>
                   </div>
-                  <Badge className={master-class-badge ${masterClass.level.toLowerCase()}}>
+                  <Badge className={`master-class-badge ${masterClass.level.toLowerCase()}`}>
                     {masterClass.level}
                   </Badge>
                   <Button className="master-class-button">

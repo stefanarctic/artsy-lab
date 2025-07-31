@@ -51,7 +51,7 @@ const Lessons = () => {
   const progressPercentage = (completedLessons / lessons.length) * 100;
 
   const handleStartLesson = (lessonId) => {
-    navigate(/canvas/${lessonId});
+    navigate(`/canvas/${lessonId}`);
   };
 
   const getDifficultyColor = (difficulty) => {
@@ -95,7 +95,7 @@ const Lessons = () => {
                 <span className="progress-percentage">{completedLessons}/{lessons.length} lecții</span>
               </div>
               <div className="progress-bar">
-                <div className="progress-fill" style={{ width: ${progressPercentage}% }}></div>
+                <div className="progress-fill" style={{ width: `${progressPercentage}%` }}></div>
               </div>
               <p className="text-xs text-muted-foreground">
                 {Math.round(progressPercentage)}% complet
@@ -125,7 +125,7 @@ const Lessons = () => {
                       Lecția {index + 1}
                     </div>
                   </div>
-                  <Badge className={lesson-difficulty ${lesson.difficulty.toLowerCase()}}>
+                  <Badge className={`lesson-difficulty ${lesson.difficulty.toLowerCase()}`}>
                     {lesson.difficulty}
                   </Badge>
                 </CardHeader>
