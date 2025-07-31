@@ -31,6 +31,7 @@ export const DrawingCanvas = forwardRef(({
   const [internalBrushSize, setInternalBrushSize] = useState([2]);
   const [internalShowReference, setInternalShowReference] = useState(true);
   const [isDrawing, setIsDrawing] = useState(false);
+  const [currentTool, setCurrentTool] = useState('brush'); // 'brush' or 'eraser'
 
   // Use external state if provided, otherwise use internal state
   const showReference = externalShowReference !== undefined ? externalShowReference : internalShowReference;
@@ -42,7 +43,8 @@ export const DrawingCanvas = forwardRef(({
   useImperativeHandle(ref, () => ({
     handleClear,
     handleDownload,
-    handleComplete
+    handleComplete,
+    setTool: setCurrentTool
   }));
 
   const colors = [
@@ -76,11 +78,21 @@ export const DrawingCanvas = forwardRef(({
   useEffect(() => {
     if (!fabricCanvas) return;
 
-    if (fabricCanvas.freeDrawingBrush) {
+    if (currentTool === 'brush') {
+      // Set up brush tool
+      fabricCanvas.freeDrawingBrush = new PencilBrush(fabricCanvas);
       fabricCanvas.freeDrawingBrush.color = activeColor;
       fabricCanvas.freeDrawingBrush.width = brushSize[0];
+      fabricCanvas.isDrawingMode = true;
+    } else if (currentTool === 'eraser') {
+      // Set up eraser tool
+      fabricCanvas.freeDrawingBrush = new PencilBrush(fabricCanvas);
+      fabricCanvas.freeDrawingBrush.color = '#ffffff'; // White color for eraser
+      fabricCanvas.freeDrawingBrush.width = brushSize[0];
+      fabricCanvas.freeDrawingBrush.globalCompositeOperation = 'destination-out'; // This makes it erase
+      fabricCanvas.isDrawingMode = true;
     }
-  }, [activeColor, brushSize, fabricCanvas]);
+  }, [currentTool, activeColor, brushSize, fabricCanvas]);
 
   useEffect(() => {
     if (!fabricCanvas || !referenceImage) return;
@@ -127,11 +139,24 @@ export const DrawingCanvas = forwardRef(({
   const handleDownload = () => {
     if (!fabricCanvas) return;
     
+    // Store the current background image state
+    const currentBackgroundImage = fabricCanvas.backgroundImage;
+    
+    // Temporarily remove the background image
+    fabricCanvas.backgroundImage = null;
+    fabricCanvas.renderAll();
+    
     const dataURL = fabricCanvas.toDataURL({
       format: 'png',
       quality: 1,
       multiplier: 2
     });
+    
+    // Restore the background image if it was previously shown
+    if (showReference && currentBackgroundImage) {
+      fabricCanvas.backgroundImage = currentBackgroundImage;
+      fabricCanvas.renderAll();
+    }
     
     const link = document.createElement('a');
     link.download = `${lessonTitle.replace(/\s+/g, '-').toLowerCase()}-artwork.png`;
@@ -146,11 +171,24 @@ export const DrawingCanvas = forwardRef(({
   const handleComplete = () => {
     if (!fabricCanvas) return;
     
+    // Store the current background image state
+    const currentBackgroundImage = fabricCanvas.backgroundImage;
+    
+    // Temporarily remove the background image
+    fabricCanvas.backgroundImage = null;
+    fabricCanvas.renderAll();
+    
     const dataURL = fabricCanvas.toDataURL({
       format: 'png',
       quality: 1,
       multiplier: 2
     });
+    
+    // Restore the background image if it was previously shown
+    if (showReference && currentBackgroundImage) {
+      fabricCanvas.backgroundImage = currentBackgroundImage;
+      fabricCanvas.renderAll();
+    }
     
     onComplete?.(dataURL);
     toast.success("Lesson completed!");

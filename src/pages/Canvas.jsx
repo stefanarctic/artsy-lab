@@ -1,9 +1,9 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { DrawingCanvas } from "@/components/DrawingCanvas.jsx";
 import { Button } from "@/components/ui/button.jsx";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card.jsx";
-import { ArrowLeft, Target, Lightbulb, Eye, EyeOff, RefreshCw, Download, Palette, Settings, Pencil } from "lucide-react";
+import { ArrowLeft, Target, Lightbulb, Eye, EyeOff, RefreshCw, Download, Palette, Settings, Pencil, Eraser } from "lucide-react";
 
 // Import reference images
 import headShapeRef from "@/assets/reference-head-shape.png";
@@ -17,6 +17,7 @@ const Canvas = () => {
   const [showReference, setShowReference] = useState(true);
   const [brushSize, setBrushSize] = useState(2);
   const [activeColor, setActiveColor] = useState("#000000");
+  const [currentTool, setCurrentTool] = useState('brush'); // 'brush' or 'eraser'
   const drawingCanvasRef = useRef(null);
 
   const lessonsData = {
@@ -166,6 +167,36 @@ const Canvas = () => {
     setActiveColor(color);
   };
 
+  const handleToolChange = (tool) => {
+    setCurrentTool(tool);
+    if (drawingCanvasRef.current) {
+      drawingCanvasRef.current.setTool(tool);
+    }
+  };
+
+  // Add keyboard shortcuts
+  useEffect(() => {
+    const handleKeyPress = (event) => {
+      if (event.target.tagName === 'INPUT' || event.target.tagName === 'TEXTAREA') {
+        return; // Don't handle shortcuts when typing in input fields
+      }
+      
+      switch (event.key.toLowerCase()) {
+        case 'b':
+          handleToolChange('brush');
+          break;
+        case 'e':
+          handleToolChange('eraser');
+          break;
+        default:
+          break;
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyPress);
+    return () => window.removeEventListener('keydown', handleKeyPress);
+  }, []);
+
   return (
     <div className="canvas-page">
       {/* Header */}
@@ -256,8 +287,32 @@ const Canvas = () => {
                 <h3>Drawing Tools</h3>
               </div>
               <div className="sidebar-content">
+                <div className="tool-selection">
+                  <Button 
+                    variant={currentTool === 'brush' ? 'default' : 'outline'}
+                    size="sm"
+                    className="tool-btn"
+                    onClick={() => handleToolChange('brush')}
+                    title="Brush tool (B)"
+                  >
+                    <Pencil className="w-4 h-4 mr-2" />
+                    Brush
+                    {/* <span className="ml-1 text-xs opacity-60">(B)</span> */}
+                  </Button>
+                  <Button 
+                    variant={currentTool === 'eraser' ? 'default' : 'outline'}
+                    size="sm"
+                    className="tool-btn"
+                    onClick={() => handleToolChange('eraser')}
+                    title="Eraser tool (E)"
+                  >
+                    <Eraser className="w-4 h-4 mr-2" />
+                    Eraser
+                    {/* <span className="ml-1 text-xs opacity-60">(E)</span> */}
+                  </Button>
+                </div>
                 <div className="tool-control">
-                  <label>Brush Size: {brushSize}px</label>
+                  <label>{currentTool === 'brush' ? 'Brush' : 'Eraser'} Size: {brushSize}px</label>
                   <input 
                     type="range" 
                     min="1" 
