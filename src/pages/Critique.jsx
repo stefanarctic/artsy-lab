@@ -25,39 +25,62 @@ const Critique = () => {
   const [critique, setCritique] = useState(null);
   const [userNotes, setUserNotes] = useState("");
 
-  // Mock AI critique - In a real app, this would call an AI service
   const generateCritique = async () => {
+    if (!artwork) {
+      toast.error("No artwork available for critique");
+      return;
+    }
+
     setIsAnalyzing(true);
     
-    // Simulate AI analysis delay
-    await new Promise(resolve => setTimeout(resolve, 3000));
-    
-    const mockCritique = {
-      overallScore: Math.floor(Math.random() * 30) + 70, // 70-100 range
-      strengths: [
-        "Great use of proportional guidelines",
-        "Confident line work and stroke placement",
-        "Good understanding of basic facial structure",
-        "Clean and organized approach to construction"
-      ],
-      improvements: [
-        "Try varying line weights for more depth",
-        "Focus on smoother curves for organic shapes",
-        "Practice blending and shading techniques",
-        "Work on symmetry between facial features"
-      ],
-      suggestions: [
-        "Study real portrait references for accuracy",
-        "Practice gesture drawing for fluid lines",
-        "Experiment with different drawing tools",
-        "Break down complex shapes into simpler forms"
-      ],
-      encouragement: "You're making excellent progress! Your understanding of facial proportions is developing well. Keep practicing regularly and don't be afraid to experiment with different techniques."
-    };
-    
-    setCritique(mockCritique);
-    setIsAnalyzing(false);
-    toast.success("AI analysis complete!");
+    try {
+      // Create the payload
+      const payload = {
+        imageData: artwork, // The artwork is already in base64 format from the canvas
+        type: "portret full"
+      };
+
+      // Make the API call
+      const response = await fetch('https://puls-ai-chatbot.fly.dev/webhook/critique', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+      });
+
+      if (!response.ok) {
+        throw new Error(`API request failed with status ${response.status}`);
+      }
+
+      const result = await response.json();
+      
+      // Extract score from the output text
+      const scoreMatch = result.output.match(/Scor: (\d+)\/100/);
+      const score = scoreMatch ? parseInt(scoreMatch[1]) : 0;
+      
+      // The rest of the text is the feedback
+      const feedback = result.output.replace(/Scor: \d+\/100/g, '').trim();
+      
+      // Transform the API response into our expected critique format
+      const apiCritique = {
+        overallScore: score,
+        feedback: feedback,
+        // Remove the other fields since we're not using them anymore
+        strengths: [],
+        improvements: [],
+        suggestions: [],
+        encouragement: ""
+      };
+      
+      setCritique(apiCritique);
+      toast.success("AI analysis complete!");
+    } catch (error) {
+      console.error('Error getting critique:', error);
+      toast.error("Failed to get AI critique. Please try again.");
+    } finally {
+      setIsAnalyzing(false);
+    }
   };
 
   const handleDownloadArtwork = () => {
@@ -215,67 +238,20 @@ const Critique = () => {
                   </CardContent>
                 </Card>
 
-                {/* Strengths */}
+                {/* Feedback */}
                 <Card>
                   <CardHeader>
-                    <CardTitle className="text-green-600">✨ Strengths</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <ul className="space-y-2">
-                      {critique.strengths.map((strength, index) => (
-                        <li key={index} className="flex items-start gap-2">
-                          <div className="w-2 h-2 bg-green-500 rounded-full mt-2 flex-shrink-0"></div>
-                          {strength}
-                        </li>
-                      ))}
-                    </ul>
-                  </CardContent>
-                </Card>
-
-                {/* Areas for Improvement */}
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="text-orange-600 flex items-center gap-2">
-                      <TrendingUp className="w-5 h-5" />
-                      Areas for Improvement
+                    <CardTitle className="flex items-center gap-2">
+                      <MessageSquare className="w-5 h-5" />
+                      AI Feedback
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <ul className="space-y-2">
-                      {critique.improvements.map((improvement, index) => (
-                        <li key={index} className="flex items-start gap-2">
-                          <div className="w-2 h-2 bg-orange-500 rounded-full mt-2 flex-shrink-0"></div>
-                          {improvement}
-                        </li>
+                    <div className="prose prose-sm max-w-none">
+                      {critique.feedback.split('\n').map((line, index) => (
+                        line.trim() ? <p key={index}>{line}</p> : <br key={index} />
                       ))}
-                    </ul>
-                  </CardContent>
-                </Card>
-
-                {/* Suggestions */}
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="text-blue-600">💡 Suggestions</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <ul className="space-y-2">
-                      {critique.suggestions.map((suggestion, index) => (
-                        <li key={index} className="flex items-start gap-2">
-                          <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
-                          {suggestion}
-                        </li>
-                      ))}
-                    </ul>
-                  </CardContent>
-                </Card>
-
-                {/* Encouragement */}
-                <Card className="bg-gradient-secondary">
-                  <CardHeader>
-                    <CardTitle>Encouragement</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-lg italic">{critique.encouragement}</p>
+                    </div>
                   </CardContent>
                 </Card>
 
