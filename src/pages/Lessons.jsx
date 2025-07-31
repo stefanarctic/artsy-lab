@@ -1,54 +1,141 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button.jsx";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card.jsx";
 import { Progress } from "@/components/ui/progress.jsx";
 import { Badge } from "@/components/ui/badge.jsx";
-import { CheckCircle, Circle, Play, Lock, ArrowLeft } from "lucide-react";
+import { CheckCircle, Circle, Play, Lock, ArrowLeft, Clock } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const Lessons = () => {
   const navigate = useNavigate();
-  const [lessons, setLessons] = useState([
+  const defaultLessons = [
     {
       id: "head-shape",
       title: "Forma capului și proporțiile",
-      description: "Învață structura fundamentală și proporțiile capului uman",
+      description: "Învață structura fundamentală și proporțiile capului uman pentru a crea baza oricărui portret reușit",
       difficulty: "Începător",
       duration: "15 min",
       completed: false,
-      locked: false
+      locked: false,
+      objectives: [
+        "Înțelegerea proporțiilor standard ale capului",
+        "Construirea formei de bază a craniului",
+        "Plasarea corectă a elementelor faciale",
+        "Stabilirea liniilor directoare pentru simetrie"
+      ],
+      tips: [
+        "Începe cu forme geometrice simple",
+        "Folosește linii ușoare pentru schițare",
+        "Verifică constant simetria",
+        "Marchează clar liniile mediane"
+      ]
     },
     {
       id: "eyes",
       title: "Desenarea ochilor",
-      description: "Stăpânește arta desenării ochilor realiști cu anatomie corectă",
+      description: "Stăpânește arta desenării ochilor realiști cu anatomie corectă și expresivitate naturală",
       difficulty: "Începător",
       duration: "20 min",
       completed: false,
-      locked: true
+      locked: true,
+      objectives: [
+        "Înțelegerea structurii anatomice a ochiului",
+        "Desenarea corectă a pleoapelor și genelor",
+        "Redarea expresivității prin detalii fine",
+        "Crearea iluziei de profunzime și strălucire"
+      ],
+      tips: [
+        "Observă forma alungită a ochiului",
+        "Acordă atenție reflexiilor din iris",
+        "Nu uita de umbrele sub pleoapa superioară",
+        "Adaugă detalii gradual, de la general la specific"
+      ]
     },
     {
       id: "nose",
       title: "Structura nasului",
-      description: "Înțelege anatomia nasului și învață să-l desenezi din diferite unghiuri",
+      description: "Înțelege anatomia nasului și învață să-l desenezi corect din orice unghi pentru un portret convingător",
       difficulty: "Intermediar",
       duration: "18 min",
       completed: false,
-      locked: true
+      locked: true,
+      objectives: [
+        "Studierea structurii cartilaginoase a nasului",
+        "Înțelegerea jocului de lumini și umbre",
+        "Desenarea corectă a nărilor și punții nazale",
+        "Redarea volumului prin tehnici de umbrire"
+      ],
+      tips: [
+        "Începe cu forma de bază triunghiulară",
+        "Observă cum lumina afectează formele",
+        "Acordă atenție proporțiilor relative",
+        "Folosește umbre subtile pentru volum"
+      ]
     },
     {
       id: "mouth",
       title: "Buzele și gura",
-      description: "Învață să desenezi buzele și expresiile gurii cu încredere",
+      description: "Învață să desenezi buze expresive și naturale, stăpânind anatomia și textura acestora",
       difficulty: "Intermediar",
       duration: "22 min",
       completed: false,
-      locked: true
+      locked: true,
+      objectives: [
+        "Înțelegerea anatomiei buzelor",
+        "Desenarea corectă a arcului lui Cupidon",
+        "Redarea texturii și volumului",
+        "Crearea expresiilor faciale prin poziția buzelor"
+      ],
+      tips: [
+        "Observă forma de M a buzei superioare",
+        "Buza inferioară este de obicei mai plină",
+        "Folosește umbre pentru a sugera volumul",
+        "Adaugă mici detalii pentru textura naturală"
+      ]
     }
-  ]);
+  ];
+
+  const [lessons, setLessons] = useState(() => {
+    // Try to get saved lessons state from localStorage
+    const savedLessons = localStorage.getItem('lessons');
+    if (savedLessons) {
+      const parsed = JSON.parse(savedLessons);
+      // Merge saved state with default lessons to ensure all properties exist
+      return defaultLessons.map(defaultLesson => {
+        const savedLesson = parsed.find(l => l.id === defaultLesson.id);
+        return savedLesson ? { ...defaultLesson, ...savedLesson } : defaultLesson;
+      });
+    }
+
+    return defaultLessons;
+  });
 
   const completedLessons = lessons.filter(lesson => lesson.completed).length;
   const progressPercentage = (completedLessons / lessons.length) * 100;
+
+  // Save lessons state whenever it changes
+  useEffect(() => {
+    localStorage.setItem('lessons', JSON.stringify(lessons));
+  }, [lessons]);
+
+  const completeLesson = (lessonId) => {
+    setLessons(prevLessons => {
+      const newLessons = prevLessons.map(lesson => {
+        if (lesson.id === lessonId) {
+          // Mark current lesson as completed
+          return { ...lesson, completed: true };
+        } else if (
+          // Find the next lesson in sequence and unlock it
+          prevLessons.findIndex(l => l.id === lessonId) + 1 === 
+          prevLessons.findIndex(l => l.id === lesson.id)
+        ) {
+          return { ...lesson, locked: false };
+        }
+        return lesson;
+      });
+      return newLessons;
+    });
+  };
 
   const handleStartLesson = (lessonId) => {
     navigate(`/canvas/${lessonId}`);
@@ -132,11 +219,35 @@ const Lessons = () => {
                 
                 <CardContent className="lesson-content">
                   <CardTitle className="lesson-title">{lesson.title}</CardTitle>
-                  <CardDescription className="lesson-description">
+                  <CardDescription className="lesson-description mb-4">
                     {lesson.description}
                   </CardDescription>
-                  <div className="lesson-meta">
-                    <span className="lesson-duration">{lesson.duration}</span>
+
+                  {/* Objectives */}
+                  <div className="mb-4">
+                    <h4 className="text-sm font-semibold mb-2">Obiective:</h4>
+                    <ul className="text-sm text-muted-foreground list-disc pl-4 space-y-1">
+                      {lesson.objectives.map((objective, idx) => (
+                        <li key={idx}>{objective}</li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  {/* Tips */}
+                  <div className="mb-4">
+                    <h4 className="text-sm font-semibold mb-2">Sfaturi:</h4>
+                    <ul className="text-sm text-muted-foreground list-disc pl-4 space-y-1">
+                      {lesson.tips.map((tip, idx) => (
+                        <li key={idx}>{tip}</li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  <div className="lesson-meta mt-6 pt-4 border-t flex items-center justify-between">
+                    <span className="lesson-duration flex items-center">
+                      <Clock className="w-4 h-4 mr-2" />
+                      {lesson.duration}
+                    </span>
                     <Button 
                       variant={lesson.completed ? "secondary" : "default"}
                       size="sm"
@@ -144,7 +255,7 @@ const Lessons = () => {
                       onClick={() => handleStartLesson(lesson.id)}
                       className="gap-2"
                     >
-                      <Play />
+                      <Play className="w-4 h-4" />
                       {lesson.completed ? "Revizuiește" : lesson.locked ? "Blocat" : "Începe"}
                     </Button>
                   </div>

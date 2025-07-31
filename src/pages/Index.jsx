@@ -2,99 +2,109 @@ import { Button } from "@/components/ui/button.jsx";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card.jsx";
 import { Badge } from "@/components/ui/badge.jsx";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/lib/AuthContext";
+import { toast } from "sonner";
+import ConfigTest from "@/components/ConfigTest";
 import { 
-  BookOpen, 
   Target, 
-  BarChart3, 
-  Users,
   Eye,
   Palette,
-  PenTool,
-  Award,
-  Brush,
+  Pencil,
   Sparkles,
   Star,
   Heart,
   ArrowRight,
-  Play
+  Play,
+  User,
+  LogOut,
+  Save
 } from "lucide-react";
 
 import artIcon from "@/assets/art-icon.png";
 
 const Index = () => {
   const navigate = useNavigate();
+  const { user, logout } = useAuth();
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      toast.success("Deconectare reușită!");
+      navigate("/login");
+    } catch (error) {
+      toast.error("Eroare la deconectare.");
+      console.error(error);
+    }
+  };
 
   const features = [
     {
-      icon: <Brush className="w-6 h-6" />,
-      title: "Tehnici Interactive",
-      description: "Învață prin practică cu exerciții hands-on și feedback instant"
+      icon: <Pencil className="w-6 h-6" />,
+      title: "Canvas Interactiv",
+      description: "Desenează direct în browser cu instrumente profesionale de desen"
     },
     {
       icon: <Eye className="w-6 h-6" />,
-      title: "Vizualizare 3D",
-      description: "Explorează anatomia și proporțiile cu modele interactive 3D"
+      title: "Imagini de Referință",
+      description: "Studiază și desenează folosind imagini de referință de înaltă calitate"
     },
     {
       icon: <Sparkles className="w-6 h-6" />,
-      title: "AI-Powered Feedback",
-      description: "Primește sugestii personalizate pentru îmbunătățirea desenelor"
+      title: "Feedback AI",
+      description: "Primește feedback personalizat pentru fiecare desen realizat"
     },
     {
       icon: <Target className="w-6 h-6" />,
-      title: "Progres Gamificat",
-      description: "Urmărește-ți evoluția prin sistemul nostru de realizări"
+      title: "Progres Structurat",
+      description: "Avansează prin lecții organizate pentru învățare graduală"
     }
   ];
 
   const artStyles = [
     {
-      title: "Portrete Realiste",
-      description: "Masterizează tehnicile de redare foto-realistă",
+      title: "Forma Capului",
+      description: "Învață proporțiile și structura de bază a capului",
       color: "from-rose-500 to-pink-600",
-      difficulty: "Avansat"
+      difficulty: "Începător"
     },
     {
-      title: "Schițe Rapide",
-      description: "Dezvoltă-ți viteza și precizia în capturarea esenței",
+      title: "Desenarea Ochilor",
+      description: "Stăpânește tehnicile de desenare a ochilor realiști",
       color: "from-blue-500 to-cyan-600", 
       difficulty: "Începător"
     },
     {
-      title: "Expresii Faciale",
-      description: "Învață să redai emoțiile prin detalii subtile",
+      title: "Structura Nasului",
+      description: "Înțelege și desenează nasul din diferite unghiuri",
       color: "from-purple-500 to-indigo-600",
       difficulty: "Intermediar"
     },
     {
-      title: "Anatomie Artistică",
-      description: "Înțelege structura pentru o redare autentică",
+      title: "Buzele și Gura",
+      description: "Creează buze expresive și naturale",
       color: "from-amber-500 to-orange-600",
       difficulty: "Intermediar"
     }
   ];
 
-  const masterClasses = [
+  const toolFeatures = [
     {
-      title: "Fundamentele Portretului",
-      instructor: "Prof. Maria Ionescu",
-      duration: "2h 30min",
-      students: 1240,
-      level: "Începător"
+      title: "Instrumente de Desen",
+      description: "Creion și radieră cu dimensiune ajustabilă",
+      icon: <Pencil className="w-6 h-6" />,
+      highlight: "Precizie"
     },
     {
-      title: "Lumină și Umbră Avansată",
-      instructor: "Prof. Alexandru Pop", 
-      duration: "3h 15min",
-      students: 890,
-      level: "Avansat"
+      title: "Paletă de Culori",
+      description: "Selectează din culori predefinite sau personalizate",
+      icon: <Palette className="w-6 h-6" />,
+      highlight: "Versatilitate"
     },
     {
-      title: "Texturi și Materiale",
-      instructor: "Prof. Elena Radu",
-      duration: "2h 45min", 
-      students: 670,
-      level: "Intermediar"
+      title: "Salvare Automată",
+      description: "Progresul tău este salvat automat",
+      icon: <Save className="w-6 h-6" />,
+      highlight: "Siguranță"
     }
   ];
 
@@ -127,13 +137,45 @@ const Index = () => {
             </div>
             
             <div className="header-nav-links">
-              <a href="#">Studio</a>
-              <a href="#">Galerie</a>
-              <a href="#">Masterclass</a>
-              <a href="#">Comunitate</a>
-              <Button size="sm" className="header-button">
-                Contul Meu
-              </Button>
+              <a href="/lessons">Lectii</a>
+              <a href="/gallery">Galerie</a>
+              <a href="/community">Comunitate</a>
+              {user ? (
+                <div className="flex items-center gap-2">
+                  <Button 
+                    variant="ghost" 
+                    size="sm"
+                    onClick={() => navigate("/profile")}
+                  >
+                    <User className="w-4 h-4 mr-2" />
+                    Profil
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={handleLogout}
+                  >
+                    <LogOut className="w-4 h-4 mr-2" />
+                    Deconectare
+                  </Button>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2">
+                  <Button 
+                    variant="ghost" 
+                    size="sm"
+                    onClick={() => navigate("/login")}
+                  >
+                    Autentificare
+                  </Button>
+                  <Button 
+                    size="sm"
+                    onClick={() => navigate("/register")}
+                  >
+                    Înregistrare
+                  </Button>
+                </div>
+              )}
             </div>
           </nav>
         </div>
@@ -186,24 +228,24 @@ const Index = () => {
                   className="hero-secondary-button"
                 >
                   <Play />
-                  Demo Live
+                  Vezi Galeria
                 </Button>
               </div>
               
               <div className="hero-stats">
                 <div className="stat-item">
-                  <p className="stat-number">2.5K+</p>
-                  <p className="stat-label">Artiști Activi</p>
+                  <p className="stat-number">4</p>
+                  <p className="stat-label">Lecții Interactive</p>
                 </div>
                 <div className="stat-divider"></div>
                 <div className="stat-item">
-                  <p className="stat-number">15K+</p>
-                  <p className="stat-label">Opere Create</p>
+                  <p className="stat-number">AI</p>
+                  <p className="stat-label">Feedback Instant</p>
                 </div>
                 <div className="stat-divider"></div>
                 <div className="stat-item">
-                  <p className="stat-number">98%</p>
-                  <p className="stat-label">Satisfacție</p>
+                  <p className="stat-number">100%</p>
+                  <p className="stat-label">Gratuit</p>
                 </div>
               </div>
             </div>
@@ -212,7 +254,7 @@ const Index = () => {
               <div className="hero-canvas-container">
                 {/* Floating Art Elements */}
                 <div className="floating-element-1">
-                  <Brush />
+                  <Pencil />
                 </div>
                 <div className="floating-element-2">
                   <Heart />
@@ -261,6 +303,9 @@ const Index = () => {
         </div>
       </section>
 
+      {/* Configuration Test - Remove after testing */}
+      {/* <ConfigTest /> */}
+
       <div className="container mx-auto px-6">
         {/* Features Section */}
         <section className="features">
@@ -306,7 +351,7 @@ const Index = () => {
               <Card key={index} className="art-style-card">
                 <div className={`art-style-header bg-gradient-to-br ${style.color}`}>
                   <div className="art-style-icon">
-                    <Brush />
+                    <Pencil />
                   </div>
                 </div>
                 <CardHeader className="art-style-content">
@@ -322,7 +367,7 @@ const Index = () => {
                 </CardHeader>
                 <CardContent className="art-style-content">
                   <Button variant="outline" className="art-style-button">
-                    <Brush />
+                    <Pencil />
                     Începe să practici
                   </Button>
                 </CardContent>
@@ -331,44 +376,32 @@ const Index = () => {
           </div>
         </section>
 
-        {/* Master Classes Section */}
-        <section className="master-classes">
-          <div className="master-classes-header">
-            <h2 className="master-classes-title">
-              <span>Masterclass-uri Exclusive</span>
+        {/* Tools Section */}
+        <section className="tools-section py-20">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold mb-4">
+              <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                Instrumente de Desen
+              </span>
             </h2>
-            <p className="master-classes-description">
-              Învață de la cei mai buni artiști și profesori de artă din România
+            <p className="text-muted-foreground text-lg">
+              Tot ce ai nevoie pentru a începe să desenezi
             </p>
           </div>
-          <div className="master-classes-grid">
-            {masterClasses.map((masterClass, index) => (
-              <Card key={index} className="master-class-card">
-                <CardHeader className="master-class-header">
-                  <div className="master-class-icon">
-                    <Award />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {toolFeatures.map((tool, index) => (
+              <Card key={index} className="text-center hover:shadow-lg transition-shadow">
+                <CardHeader>
+                  <div className="mx-auto w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4">
+                    {tool.icon}
                   </div>
-                  <CardTitle className="master-class-title">{masterClass.title}</CardTitle>
-                  <p className="master-class-instructor">{masterClass.instructor}</p>
+                  <CardTitle>{tool.title}</CardTitle>
+                  <CardDescription>{tool.description}</CardDescription>
                 </CardHeader>
-                <CardContent className="master-class-content">
-                  <div className="master-class-details">
-                    <div className="detail-item">
-                      <span className="detail-label">Durată:</span>
-                      <span className="detail-value">{masterClass.duration}</span>
-                    </div>
-                    <div className="detail-item">
-                      <span className="detail-label">Studenți:</span>
-                      <span className="detail-value">{masterClass.students.toLocaleString()}</span>
-                    </div>
-                  </div>
-                  <Badge className={`master-class-badge ${masterClass.level.toLowerCase()}`}>
-                    {masterClass.level}
+                <CardContent>
+                  <Badge variant="secondary" className="mt-2">
+                    {tool.highlight}
                   </Badge>
-                  <Button className="master-class-button">
-                    <Play />
-                    Începe Masterclass-ul
-                  </Button>
                 </CardContent>
               </Card>
             ))}

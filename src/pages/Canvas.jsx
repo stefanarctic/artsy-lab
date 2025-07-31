@@ -118,8 +118,14 @@ const Canvas = () => {
   }
 
   const handleComplete = (artwork) => {
-    // Navigate to critique page with the artwork
-    navigate("/critique", { state: { artwork, lessonTitle: currentLesson.title } });
+    // Navigate to critique page with the artwork and lesson info
+    navigate("/critique", { 
+      state: { 
+        artwork, 
+        lessonTitle: currentLesson.title,
+        lessonId: currentLesson.id
+      } 
+    });
   };
 
   const handleNext = () => {

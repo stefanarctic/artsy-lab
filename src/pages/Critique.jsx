@@ -34,10 +34,22 @@ const Critique = () => {
     setIsAnalyzing(true);
     
     try {
+      // Determine the lesson type
+      const lessonType = (() => {
+        const pathParts = location.pathname.split('/');
+        const lessonId = pathParts[pathParts.length - 1];
+        switch (lessonId) {
+          case 'eyes': return 'ochi';
+          case 'nose': return 'nas';
+          case 'mouth': return 'gura';
+          default: return 'portret full';
+        }
+      })();
+
       // Create the payload
       const payload = {
         imageData: artwork, // The artwork is already in base64 format from the canvas
-        type: "portret full"
+        type: lessonType
       };
 
       // Make the API call
@@ -97,6 +109,36 @@ const Critique = () => {
   };
 
   const handleNextLesson = () => {
+    // Get the current lesson ID from the state
+    const currentLessonId = location.state?.lessonId;
+    
+    if (currentLessonId) {
+      // Get lessons from localStorage
+      const savedLessons = localStorage.getItem('lessons');
+      if (savedLessons) {
+        const lessons = JSON.parse(savedLessons);
+        
+        // Find the current lesson index
+        const currentIndex = lessons.findIndex(l => l.id === currentLessonId);
+        
+        if (currentIndex !== -1) {
+          const updatedLessons = lessons.map((lesson, index) => {
+            if (index === currentIndex) {
+              // Mark current lesson as completed
+              return { ...lesson, completed: true };
+            } else if (index === currentIndex + 1) {
+              // Unlock the next lesson
+              return { ...lesson, locked: false };
+            }
+            return lesson;
+          });
+          
+          localStorage.setItem('lessons', JSON.stringify(updatedLessons));
+          toast.success("Lecție completată! Următoarea lecție a fost deblocată.");
+        }
+      }
+    }
+
     navigate("/lessons");
   };
 
