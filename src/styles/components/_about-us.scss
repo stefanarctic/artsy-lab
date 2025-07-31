@@ -1,0 +1,205 @@
+// About Us page styles
+.about-us {
+  min-height: 100vh;
+  background-color: var(--background);
+  position: relative;
+  
+  // Header Navigation
+  .about-header-nav {
+    // border-bottom: 1px solid var(--border);
+    // background-color: var(--background);
+    // backdrop-filter: blur(8px);
+    position: relative;
+    z-index: 10;
+    
+    .about-header-container {
+      max-width: 1300px;
+      margin: 10px auto;
+      padding: 0 1rem;
+    }
+    
+    .about-back-button {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 1rem 0;
+      background: none;
+      border: none;
+      color: var(--foreground);
+      font-weight: 500;
+      cursor: pointer;
+      transition: all $transition-normal;
+      border-radius: $radius-md;
+      
+      &:hover {
+        color: var(--primary);
+        transform: translateX(-0.25rem);
+      }
+      
+      svg {
+        width: 1rem;
+        height: 1rem;
+        transition: transform $transition-normal;
+      }
+      
+      &:hover svg {
+        transform: translateX(-0.25rem);
+      }
+    }
+  }
+  
+  .about-container {
+    max-width: 1600px;
+    margin: 10px auto;
+    padding: 2rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: calc(100vh - 80px); // Subtract header height
+  }
+  
+  .about-content {
+    text-align: center;
+    
+    // Header Section
+    .about-header {
+      margin-bottom: 3rem;
+      
+      .about-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.5rem 1rem;
+        background: rgba(59, 130, 246, 0.1);
+        border: 1px solid rgba(59, 130, 246, 0.2);
+        border-radius: 9999px;
+        margin-bottom: 2rem;
+        
+        svg {
+          width: 1rem;
+          height: 1rem;
+          color: var(--primary);
+          animation: spin 2s linear infinite;
+        }
+        
+        span {
+          font-size: 0.875rem;
+          font-weight: 600;
+          color: var(--primary);
+        }
+      }
+      
+      h1 {
+        font-size: 2.5rem;
+        font-weight: 900;
+        margin-bottom: 2rem;
+        color: var(--foreground);
+      }
+      
+      .about-text {
+        font-size: 1.125rem;
+        color: var(--muted-foreground);
+        line-height: 1.7;
+        margin-bottom: 1.5rem;
+        text-align: center;
+        max-width: 1400px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+    }
+
+    // Features Section
+    .about-features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      margin-bottom: 3rem;
+      
+      .feature-item {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: $radius-lg;
+        padding: 2rem;
+        text-align: center;
+        transition: all $transition-normal;
+        
+        &:hover {
+          transform: translateY(-0.25rem);
+          box-shadow: $shadow-lg;
+          border-color: var(--primary);
+        }
+        
+        .feature-icon {
+          width: 3rem;
+          height: 3rem;
+          background: linear-gradient(135deg, var(--primary), var(--accent));
+          border-radius: $radius-lg;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin: 0 auto 1rem;
+          
+          svg {
+            width: 1.5rem;
+            height: 1.5rem;
+            color: white;
+          }
+        }
+        
+        h3 {
+          font-size: 1.25rem;
+          font-weight: 700;
+          margin-bottom: 0.75rem;
+          color: var(--foreground);
+        }
+        
+        p {
+          font-size: 0.875rem;
+          color: var(--muted-foreground);
+          line-height: 1.6;
+        }
+      }
+    }
+
+    // CTA Section
+    .about-cta {
+      .about-button {
+        background: linear-gradient(to right, var(--primary), var(--accent));
+        color: white;
+        font-weight: 600;
+        font-size: 1rem;
+        padding: 0.75rem 1.5rem;
+        border-radius: $radius-md;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all $transition-normal;
+        
+        &:hover {
+          transform: translateY(-0.125rem);
+          box-shadow: $shadow-md;
+        }
+        
+        svg {
+          width: 1rem;
+          height: 1rem;
+          transition: transform $transition-normal;
+        }
+        
+        &:hover svg {
+          transform: translateX(0.25rem);
+        }
+      }
+    }
+  }
+}
+
+// Animations
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+} 
