@@ -36,7 +36,7 @@ const Navbar = () => {
             </div>
             <div className="header-title">
               <h1>ArtsyLab</h1>
-              <p>Creative Learning Studio</p>
+              <p>Studio de Învățare Creativă</p>
             </div>
           </div>
           

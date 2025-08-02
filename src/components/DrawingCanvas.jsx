@@ -133,7 +133,7 @@ export const DrawingCanvas = forwardRef(({
     }
     
     fabricCanvas.renderAll();
-    toast.success("Canvas cleared!");
+          toast.success("Canvas golit!");
   };
 
   const handleDownload = () => {
@@ -165,7 +165,7 @@ export const DrawingCanvas = forwardRef(({
     link.click();
     document.body.removeChild(link);
     
-    toast.success("Artwork downloaded!");
+          toast.success("Lucrarea a fost descărcată!");
   };
 
   const handleComplete = () => {
@@ -191,7 +191,7 @@ export const DrawingCanvas = forwardRef(({
     }
     
     onComplete?.(dataURL);
-    toast.success("Lesson completed!");
+          toast.success("Lecția completată!");
   };
 
   return (

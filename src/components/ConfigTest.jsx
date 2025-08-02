@@ -50,25 +50,25 @@ const ConfigTest = () => {
   return (
     <Card className="w-[400px] mx-auto mt-8">
       <CardHeader>
-        <CardTitle>Configuration Test</CardTitle>
+        <CardTitle>Test de Configurare</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <div>
-          <p className="font-medium">Firebase Status:</p>
+          <p className="font-medium">Status Firebase:</p>
           <p>{firebaseStatus}</p>
           <p className="text-sm text-muted-foreground mt-1">
             Cloud Name: {import.meta.env.VITE_CLOUDINARY_CLOUD_NAME}
           </p>
         </div>
         <div>
-          <p className="font-medium">Cloudinary Status:</p>
+          <p className="font-medium">Status Cloudinary:</p>
           <p>{cloudinaryStatus}</p>
           {cloudinaryStatus === 'Checking...' && (
             <Button 
               onClick={testCloudinaryUpload}
               className="mt-2"
             >
-              Test Cloudinary Upload
+              Testează Încărcarea Cloudinary
             </Button>
           )}
         </div>

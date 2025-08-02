@@ -41,55 +41,55 @@ const Canvas = () => {
     },
     "eyes": {
       id: "eyes",
-      title: "Drawing Eyes",
-      description: "Master the art of drawing realistic eyes with proper anatomy",
+      title: "Desenarea Ochilor",
+      description: "Stăpânește arta desenării ochilor realiști cu anatomie corectă",
       objectives: [
-        "Understand eye anatomy structure",
-        "Draw the eye socket and eyelids",
-        "Add the iris, pupil, and highlights",
-        "Practice different eye expressions"
+        "Înțelege structura anatomică a ochiului",
+        "Desenează orbita și pleoapele",
+        "Adaugă irisul, pupila și reflexiile",
+        "Exersează diferite expresii ale ochilor"
       ],
       tips: [
-        "Eyes are almond-shaped, not perfect ovals",
-        "Leave white space for natural highlights",
-        "The upper eyelid creates more shadow",
-        "Practice both eyes to maintain symmetry"
+        "Ochii au forma de migdală, nu ovale perfecte",
+        "Lasă spațiu alb pentru reflexiile naturale",
+        "Pleoapa superioară creează mai multă umbră",
+        "Exersează ambii ochi pentru a menține simetria"
       ],
       referenceImage: eyesRef
     },
     "nose": {
       id: "nose",
-      title: "Nose Structure",
-      description: "Understand nose anatomy and learn to draw it from different angles",
+      title: "Structura Nasului",
+      description: "Înțelege anatomia nasului și învață să-l desenezi din diferite unghiuri",
       objectives: [
-        "Learn nose basic structure",
-        "Draw the nose bridge and nostrils",
-        "Understand light and shadow on the nose",
-        "Practice different nose types"
+        "Învață structura de bază a nasului",
+        "Desenează puntea nazală și nările",
+        "Înțelege lumina și umbra pe nas",
+        "Exersează diferite tipuri de nas"
       ],
       tips: [
-        "The nose is like a triangular prism",
-        "Focus on the shadow shapes",
-        "Nostrils are not perfect circles",
-        "The nose tip catches the most light"
+        "Nasul este ca o prismă triunghiulară",
+        "Concentrează-te pe formele umbrelor",
+        "Nările nu sunt cercuri perfecte",
+        "Vârful nasului prinde cea mai multă lumină"
       ],
       referenceImage: noseRef
     },
     "mouth": {
       id: "mouth",
-      title: "Lips & Mouth",
-      description: "Learn to draw lips and mouth expressions with confidence",
+      title: "Buzele și Gura",
+      description: "Învață să desenezi buze și expresii ale gurii cu încredere",
       objectives: [
-        "Understand lip anatomy and structure",
-        "Draw the mouth line and lip shapes",
-        "Add dimension with light and shadow",
-        "Practice different expressions"
+        "Înțelege anatomia și structura buzelor",
+        "Desenează linia gurii și formele buzelor",
+        "Adaugă dimensiune cu lumină și umbră",
+        "Exersează diferite expresii"
       ],
       tips: [
-        "The upper lip is typically darker",
-        "The mouth line isn't a straight line",
-        "Lower lip catches more light",
-        "Practice subtle expressions first"
+        "Buza superioară este de obicei mai întunecată",
+        "Linia gurii nu este o linie dreaptă",
+        "Buza inferioară prinde mai multă lumină",
+        "Exersează mai întâi expresiile subtile"
       ],
       referenceImage: mouthRef
     }
@@ -102,14 +102,14 @@ const Canvas = () => {
       <div className="min-h-screen bg-gradient-canvas flex items-center justify-center">
         <Card className="max-w-md">
           <CardHeader>
-            <CardTitle>Lesson Not Found</CardTitle>
+            <CardTitle>Lecția nu a fost găsită</CardTitle>
             <CardDescription>
-              The requested lesson could not be found.
+              Lecția solicitată nu a putut fi găsită.
             </CardDescription>
           </CardHeader>
           <CardContent>
             <Button onClick={() => navigate("/lessons")}>
-              Back to Lessons
+              Înapoi la Lecții
             </Button>
           </CardContent>
         </Card>
@@ -210,7 +210,7 @@ const Canvas = () => {
         <div className="canvas-header-container">
           <div className="canvas-title-section">
             <h1 className="canvas-title">{currentLesson.title}</h1>
-            <p className="canvas-subtitle">Interactive Drawing Canvas</p>
+            <p className="canvas-subtitle">Canvas Interactiv de Desen</p>
           </div>
           <Button 
             variant="outline" 
@@ -219,7 +219,7 @@ const Canvas = () => {
             onClick={() => setShowReference(!showReference)}
           >
             {showReference ? <Eye className="w-4 h-4 mr-2" /> : <EyeOff className="w-4 h-4 mr-2" />}
-            {showReference ? "Hide" : "Show"} Reference
+            {showReference ? "Ascunde" : "Arată"} Referința
           </Button>
         </div>
       </header>
