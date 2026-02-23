@@ -123,7 +123,8 @@ const Canvas = () => {
       state: { 
         artwork, 
         lessonTitle: currentLesson.title,
-        lessonId: currentLesson.id
+        lessonId: currentLesson.id,
+        referenceImage: currentLesson.referenceImage
       } 
     });
   };

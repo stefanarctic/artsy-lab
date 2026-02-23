@@ -9,17 +9,17 @@ import {
   ArrowLeft, 
   Send, 
   Star, 
-  TrendingUp, 
   MessageSquare,
   Download,
   RefreshCw
 } from "lucide-react";
 import { toast } from "sonner";
+import { compareSketchesWithGroq } from "@/lib/groqCritique.js";
 
 const Critique = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { artwork, lessonTitle, isComplete } = location.state || {};
+  const { artwork, lessonTitle, isComplete, referenceImage } = location.state || {};
   
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [critique, setCritique] = useState(null);
@@ -34,51 +34,15 @@ const Critique = () => {
     setIsAnalyzing(true);
     
     try {
-      // Determine the lesson type
-      const lessonType = (() => {
-        const pathParts = location.pathname.split('/');
-        const lessonId = pathParts[pathParts.length - 1];
-        switch (lessonId) {
-          case 'eyes': return 'ochi';
-          case 'nose': return 'nas';
-          case 'mouth': return 'gura';
-          default: return 'portret full';
-        }
-      })();
-
-      // Create the payload
-      const payload = {
-        imageData: artwork, // The artwork is already in base64 format from the canvas
-        type: lessonType
-      };
-
-      // Make the API call
-      const response = await fetch('https://puls-ai-chatbot.fly.dev/webhook/critique', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(payload)
+      const groqResult = await compareSketchesWithGroq({
+        referenceImage,
+        userArtwork: artwork,
+        lessonTitle: lessonTitle || "lectia curenta",
       });
 
-      if (!response.ok) {
-        throw new Error(`API request failed with status ${response.status}`);
-      }
-
-      const result = await response.json();
-      
-      // Extract score from the output text
-      const scoreMatch = result.output.match(/Scor: (\d+)\/100/);
-      const score = scoreMatch ? parseInt(scoreMatch[1]) : 0;
-      
-      // The rest of the text is the feedback
-      const feedback = result.output.replace(/Scor: \d+\/100/g, '').trim();
-      
-      // Transform the API response into our expected critique format
       const apiCritique = {
-        overallScore: score,
-        feedback: feedback,
-        // Remove the other fields since we're not using them anymore
+        overallScore: groqResult.overallScore,
+        feedback: groqResult.feedback,
         strengths: [],
         improvements: [],
         suggestions: [],
@@ -89,7 +53,7 @@ const Critique = () => {
       toast.success("AI analysis complete!");
     } catch (error) {
       console.error('Error getting critique:', error);
-      toast.error("Failed to get AI critique. Please try again.");
+      toast.error(error?.message || "Failed to get AI critique. Please try again.");
     } finally {
       setIsAnalyzing(false);
     }
