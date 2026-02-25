@@ -29,16 +29,27 @@ const Register = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
+    const normalizedName = formData.name.trim();
+    const normalizedEmail = formData.email.trim();
 
-    if (formData.password !== formData.confirmPassword) {
-      toast.error("Parolele nu coincid!");
-      setLoading(false);
+    if (normalizedName.length < 2) {
+      toast.error("Numele trebuie să aibă minim 2 caractere.");
+      return;
+    }
+    if (formData.password.length < 6) {
+      toast.error("Parola trebuie să aibă minim 6 caractere.");
       return;
     }
 
+    if (formData.password !== formData.confirmPassword) {
+      toast.error("Parolele nu coincid!");
+      return;
+    }
+
+    setLoading(true);
+
     try {
-      await signup(formData.email, formData.password, formData.name);
+      await signup(normalizedEmail, formData.password, normalizedName);
       navigate("/");
     } catch (error) {
       console.error(error);

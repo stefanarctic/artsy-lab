@@ -1,15 +1,6 @@
-import { db } from './firebase';
-import {
-  collection,
-  doc,
-  getDoc,
-  getDocs,
-  query,
-  where,
-  orderBy,
-  limit,
-  startAfter
-} from 'firebase/firestore';
+import { db } from "./firebase";
+import { collection, doc, getDoc, getDocs, limit, orderBy, query, startAfter, where } from "firebase/firestore";
+import { getPublicArtworks, getUserProfile as getUserProfileRaw } from "@/lib/firestore.js";
 
 // Cache for storing fetched data
 const cache = new Map();
@@ -22,7 +13,7 @@ const isCacheValid = (timestamp) => {
 
 // Get paginated artworks
 export const getArtworks = async (pageSize = 10, lastDoc = null) => {
-  const cacheKey = `artworks_${pageSize}_${lastDoc?.id || 'start'}`;
+  const cacheKey = `artworks_${pageSize}_${lastDoc?.id || "start"}`;
   
   // Check cache first
   if (cache.has(cacheKey)) {
@@ -34,25 +25,8 @@ export const getArtworks = async (pageSize = 10, lastDoc = null) => {
   }
 
   try {
-    let artworksQuery = query(
-      collection(db, 'artworks'),
-      where('isPublic', '==', true),
-      orderBy('createdAt', 'desc'),
-      limit(pageSize)
-    );
-
-    if (lastDoc) {
-      artworksQuery = query(
-        artworksQuery,
-        startAfter(lastDoc)
-      );
-    }
-
-    const snapshot = await getDocs(artworksQuery);
-    const artworks = [];
-    snapshot.forEach(doc => {
-      artworks.push({ id: doc.id, ...doc.data() });
-    });
+    const result = await getPublicArtworks({ pageSize, lastDoc });
+    const artworks = result.items;
 
     // Store in cache
     cache.set(cacheKey, {
@@ -80,16 +54,15 @@ export const getUserProfile = async (userId) => {
   }
 
   try {
-    const docRef = doc(db, 'users', userId);
-    const docSnap = await getDoc(docRef);
+    const profile = await getUserProfileRaw(userId);
     
-    if (docSnap.exists()) {
+    if (profile) {
       const data = {
-        id: docSnap.id,
-        ...docSnap.data(),
+        id: profile.id,
+        ...profile,
         // Only include essential fields
-        artworksCount: docSnap.data().totalArtworks || 0,
-        lessonsCompleted: docSnap.data().totalLessons || 0
+        artworksCount: profile.totalArtworks || 0,
+        lessonsCompleted: profile.totalLessons || 0
       };
 
       cache.set(cacheKey, {
@@ -119,7 +92,7 @@ export const getLesson = async (lessonId) => {
   }
 
   try {
-    const docRef = doc(db, 'lessons', lessonId);
+    const docRef = doc(db, "lessons", lessonId);
     const docSnap = await getDoc(docRef);
     
     if (docSnap.exists()) {

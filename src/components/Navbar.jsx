@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button.jsx";
 import { useAuth } from "@/lib/AuthContext";
 import { toast } from "sonner";
@@ -41,9 +41,9 @@ const Navbar = () => {
           </div>
           
           <div className="header-nav-links">
-            <a href="/lessons">Studio</a>
-            <a href="/gallery">Galerie</a>
-            <a href="/community">Comunitate</a>
+            <Link to="/lessons">Studio</Link>
+            <Link to="/gallery">Galerie</Link>
+            <Link to="/community">Comunitate</Link>
             {user ? (
               <div className="flex items-center gap-2">
                 <Button 

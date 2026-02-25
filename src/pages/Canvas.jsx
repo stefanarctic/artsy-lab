@@ -1,101 +1,95 @@
-import { useParams, useNavigate } from "react-router-dom";
-import { useState, useRef, useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import {
+  ArrowLeft,
+  Download,
+  Eraser,
+  Eye,
+  EyeOff,
+  Hand,
+  History,
+  Layers,
+  Lightbulb,
+  Move,
+  Palette,
+  Pencil,
+  Redo2,
+  RefreshCw,
+  RotateCcw,
+  Settings,
+  Target,
+  Undo2,
+  ZoomIn,
+  ZoomOut,
+} from "lucide-react";
 import { DrawingCanvas } from "@/components/DrawingCanvas.jsx";
 import { Button } from "@/components/ui/button.jsx";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card.jsx";
-import { ArrowLeft, Target, Lightbulb, Eye, EyeOff, RefreshCw, Download, Palette, Settings, Pencil, Eraser } from "lucide-react";
+import { LESSON_ORDER } from "@/lib/appDataModel.js";
+import { LESSONS_BY_ID } from "@/lib/lessonsCatalog.js";
 
-// Import reference images
-import headShapeRef from "@/assets/reference-head-shape.png";
-import eyesRef from "@/assets/reference-eyes.png";
-import noseRef from "@/assets/reference-nose.png";
-import mouthRef from "@/assets/reference-mouth.png";
+const BRUSH_PRESETS = [
+  { name: "Sketch", size: 2, opacity: 0.85, hardness: 0.85, smoothing: 0.35 },
+  { name: "Ink", size: 3, opacity: 1, hardness: 1, smoothing: 0.2 },
+  { name: "Soft", size: 8, opacity: 0.55, hardness: 0.3, smoothing: 0.6 },
+  { name: "Marker", size: 10, opacity: 0.75, hardness: 0.7, smoothing: 0.45 },
+];
+
+const SHADOW_LIGHT = [
+  { name: "Umbră", color: "#2a2a2a", size: 8, opacity: 0.6, hardness: 0.35, smoothing: 0.5 },
+  { name: "Lumină", color: "#e8e8e8", size: 6, opacity: 0.55, hardness: 0.3, smoothing: 0.5 },
+];
 
 const Canvas = () => {
   const { lessonId } = useParams();
   const navigate = useNavigate();
-  const [showReference, setShowReference] = useState(true);
-  const [brushSize, setBrushSize] = useState(2);
-  const [activeColor, setActiveColor] = useState("#000000");
-  const [currentTool, setCurrentTool] = useState('brush'); // 'brush' or 'eraser'
   const drawingCanvasRef = useRef(null);
 
-  const lessonsData = {
-    "head-shape": {
-      id: "head-shape",
-      title: "Forma capului și proporțiile",
-      description: "Învață structura fundamentală și proporțiile capului uman",
-      objectives: [
-        "Înțelege proporțiile de bază ale capului",
-        "Desenează forma ovală a capului",
-        "Marchează liniile directoare pentru trăsăturile faciale",
-        "Exersează construcția capului"
-      ],
-      tips: [
-        "Începe cu o formă ovală ușoară",
-        "Capul este aproximativ 7-8 lungimi ale capului înălțime",
-        "Ochii sunt poziționați la jumătatea capului",
-        "Folosește linii ușoare pentru ghidurile inițiale"
-      ],
-      referenceImage: headShapeRef
-    },
-    "eyes": {
-      id: "eyes",
-      title: "Desenarea Ochilor",
-      description: "Stăpânește arta desenării ochilor realiști cu anatomie corectă",
-      objectives: [
-        "Înțelege structura anatomică a ochiului",
-        "Desenează orbita și pleoapele",
-        "Adaugă irisul, pupila și reflexiile",
-        "Exersează diferite expresii ale ochilor"
-      ],
-      tips: [
-        "Ochii au forma de migdală, nu ovale perfecte",
-        "Lasă spațiu alb pentru reflexiile naturale",
-        "Pleoapa superioară creează mai multă umbră",
-        "Exersează ambii ochi pentru a menține simetria"
-      ],
-      referenceImage: eyesRef
-    },
-    "nose": {
-      id: "nose",
-      title: "Structura Nasului",
-      description: "Înțelege anatomia nasului și învață să-l desenezi din diferite unghiuri",
-      objectives: [
-        "Învață structura de bază a nasului",
-        "Desenează puntea nazală și nările",
-        "Înțelege lumina și umbra pe nas",
-        "Exersează diferite tipuri de nas"
-      ],
-      tips: [
-        "Nasul este ca o prismă triunghiulară",
-        "Concentrează-te pe formele umbrelor",
-        "Nările nu sunt cercuri perfecte",
-        "Vârful nasului prinde cea mai multă lumină"
-      ],
-      referenceImage: noseRef
-    },
-    "mouth": {
-      id: "mouth",
-      title: "Buzele și Gura",
-      description: "Învață să desenezi buze și expresii ale gurii cu încredere",
-      objectives: [
-        "Înțelege anatomia și structura buzelor",
-        "Desenează linia gurii și formele buzelor",
-        "Adaugă dimensiune cu lumină și umbră",
-        "Exersează diferite expresii"
-      ],
-      tips: [
-        "Buza superioară este de obicei mai întunecată",
-        "Linia gurii nu este o linie dreaptă",
-        "Buza inferioară prinde mai multă lumină",
-        "Exersează mai întâi expresiile subtile"
-      ],
-      referenceImage: mouthRef
-    }
-  };
+  const [showReference, setShowReference] = useState(true);
+  const [brushSize, setBrushSize] = useState(4);
+  const [brushOpacity, setBrushOpacity] = useState(0.9);
+  const [brushHardness, setBrushHardness] = useState(0.85);
+  const [brushSmoothing, setBrushSmoothing] = useState(0.35);
+  const [activeColor, setActiveColor] = useState("#000000");
+  const [currentTool, setCurrentTool] = useState("brush");
+  const [zoomPercent, setZoomPercent] = useState(100);
+  const [layersState, setLayersState] = useState({ layers: [], activeLayerId: null });
+  const [historyState, setHistoryState] = useState({ entries: [], index: -1 });
 
-  const currentLesson = lessonId ? lessonsData[lessonId] : null;
+  const currentLesson = lessonId ? LESSONS_BY_ID[lessonId] : null;
+
+  useEffect(() => {
+    const handleKeyPress = (event) => {
+      if (event.target.tagName === "INPUT" || event.target.tagName === "TEXTAREA") return;
+      const key = event.key.toLowerCase();
+
+      if (event.ctrlKey && key === "z") {
+        event.preventDefault();
+        if (event.shiftKey) drawingCanvasRef.current?.redo();
+        else drawingCanvasRef.current?.undo();
+        return;
+      }
+
+      if (event.key === "[") {
+        setBrushSize((s) => Math.max(1, s - 1));
+        return;
+      }
+      if (event.key === "]") {
+        setBrushSize((s) => Math.min(60, s + 1));
+        return;
+      }
+
+      if (key === "b") setCurrentTool("brush");
+      if (key === "e") setCurrentTool("eraser");
+      if (key === "v") setCurrentTool("select");
+      if (key === "i") setCurrentTool("eyedropper");
+      if (key === "h") setCurrentTool("pan");
+      if (key === "delete") drawingCanvasRef.current?.deleteSelection();
+    };
+
+    window.addEventListener("keydown", handleKeyPress);
+    return () => window.removeEventListener("keydown", handleKeyPress);
+  }, []);
 
   if (!currentLesson) {
     return (
@@ -103,14 +97,10 @@ const Canvas = () => {
         <Card className="max-w-md">
           <CardHeader>
             <CardTitle>Lecția nu a fost găsită</CardTitle>
-            <CardDescription>
-              Lecția solicitată nu a putut fi găsită.
-            </CardDescription>
+            <CardDescription>Lecția solicitată nu a putut fi găsită.</CardDescription>
           </CardHeader>
           <CardContent>
-            <Button onClick={() => navigate("/lessons")}>
-              Înapoi la Lecții
-            </Button>
+            <Button onClick={() => navigate("/lessons")}>Înapoi la Lecții</Button>
           </CardContent>
         </Card>
       </div>
@@ -118,122 +108,48 @@ const Canvas = () => {
   }
 
   const handleComplete = (artwork) => {
-    // Navigate to critique page with the artwork and lesson info
-    navigate("/critique", { 
-      state: { 
-        artwork, 
+    navigate("/critique", {
+      state: {
+        artwork,
         lessonTitle: currentLesson.title,
         lessonId: currentLesson.id,
-        referenceImage: currentLesson.referenceImage
-      } 
+        referenceImage: currentLesson.referenceImage,
+      },
     });
   };
 
-  const handleNext = () => {
-    const lessonOrder = ["head-shape", "eyes", "nose", "mouth"];
-    const currentIndex = lessonOrder.indexOf(currentLesson.id);
-    
-    if (currentIndex < lessonOrder.length - 1) {
-      const nextLessonId = lessonOrder[currentIndex + 1];
-      navigate(`/canvas/${nextLessonId}`);
-    } else {
-      // Last lesson completed
-      navigate("/critique", { 
-        state: { 
-          artwork: null, 
-          lessonTitle: "Final Portfolio Review",
-          isComplete: true 
-        } 
-      });
-    }
-  };
-
-  const handleClearCanvas = () => {
-    if (drawingCanvasRef.current) {
-      drawingCanvasRef.current.handleClear();
-    }
-  };
-
-  const handleDownloadCanvas = () => {
-    if (drawingCanvasRef.current) {
-      drawingCanvasRef.current.handleDownload();
-    }
-  };
-
-  const handleCompleteLesson = () => {
-    if (drawingCanvasRef.current) {
-      drawingCanvasRef.current.handleComplete();
-    }
-  };
-
   const handleNextLesson = () => {
-    handleNext();
-  };
-
-  const handleColorChange = (color) => {
-    setActiveColor(color);
-  };
-
-  const handleToolChange = (tool) => {
-    setCurrentTool(tool);
-    if (drawingCanvasRef.current) {
-      drawingCanvasRef.current.setTool(tool);
+    const currentIndex = LESSON_ORDER.indexOf(currentLesson.id);
+    if (currentIndex < LESSON_ORDER.length - 1) {
+      navigate(`/canvas/${LESSON_ORDER[currentIndex + 1]}`);
+      return;
     }
+    navigate("/critique", { state: { artwork: null, lessonTitle: "Final Portfolio Review", isComplete: true } });
   };
 
-  // Add keyboard shortcuts
-  useEffect(() => {
-    const handleKeyPress = (event) => {
-      if (event.target.tagName === 'INPUT' || event.target.tagName === 'TEXTAREA') {
-        return; // Don't handle shortcuts when typing in input fields
-      }
-      
-      switch (event.key.toLowerCase()) {
-        case 'b':
-          handleToolChange('brush');
-          break;
-        case 'e':
-          handleToolChange('eraser');
-          break;
-        default:
-          break;
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyPress);
-    return () => window.removeEventListener('keydown', handleKeyPress);
-  }, []);
+  const activeLayer = layersState.layers.find((l) => l.id === layersState.activeLayerId);
 
   return (
     <div className="canvas-page">
-      {/* Header */}
       <header className="canvas-header">
         <div className="canvas-header-container">
           <div className="canvas-title-section">
             <h1 className="canvas-title">{currentLesson.title}</h1>
             <p className="canvas-subtitle">Canvas Interactiv de Desen</p>
           </div>
-          <Button 
-            variant="outline" 
-            size="sm" 
-            className="hide-reference-btn"
-            onClick={() => setShowReference(!showReference)}
-          >
-            {showReference ? <Eye className="w-4 h-4 mr-2" /> : <EyeOff className="w-4 h-4 mr-2" />}
-            {showReference ? "Ascunde" : "Arată"} Referința
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button variant="outline" size="sm" onClick={() => setShowReference((s) => !s)}>
+              {showReference ? <Eye className="w-4 h-4 mr-2" /> : <EyeOff className="w-4 h-4 mr-2" />}
+              {showReference ? "Ascunde" : "Arată"} Referința
+            </Button>
+          </div>
         </div>
       </header>
 
       <div className="canvas-content">
         <div className="canvas-layout">
-          {/* Left Column - Lesson Information */}
           <div className="canvas-sidebar">
-            <Button 
-              variant="ghost" 
-              onClick={() => navigate("/lessons")}
-              className="back-button"
-            >
+            <Button variant="ghost" onClick={() => navigate("/lessons")} className="back-button">
               <ArrowLeft />
               Înapoi la lecții
             </Button>
@@ -245,8 +161,8 @@ const Canvas = () => {
               </div>
               <div className="sidebar-content">
                 <ul className="objectives-list">
-                  {currentLesson.objectives.map((objective, index) => (
-                    <li key={index}>{objective}</li>
+                  {currentLesson.objectives.map((objective) => (
+                    <li key={objective}>{objective}</li>
                   ))}
                 </ul>
               </div>
@@ -259,75 +175,179 @@ const Canvas = () => {
               </div>
               <div className="sidebar-content">
                 <ul className="tips-list">
-                  {currentLesson.tips.map((tip, index) => (
-                    <li key={index}>{tip}</li>
+                  {currentLesson.tips.map((tip) => (
+                    <li key={tip}>{tip}</li>
                   ))}
                 </ul>
               </div>
             </div>
+
+            <div className="sidebar-section">
+              <div className="sidebar-header">
+                <Settings className="w-5 h-5" />
+                <h3>Acțiuni</h3>
+              </div>
+              <div className="sidebar-content space-y-2">
+                <Button variant="outline" size="sm" className="w-full justify-start" onClick={() => drawingCanvasRef.current?.handleClear()}>
+                  <RefreshCw className="w-4 h-4 mr-2" />
+                  Curăță
+                </Button>
+                <Button variant="outline" size="sm" className="w-full justify-start" onClick={() => drawingCanvasRef.current?.handleRestart()}>
+                  <RotateCcw className="w-4 h-4 mr-2" />
+                  Restart
+                </Button>
+                <Button variant="outline" size="sm" className="w-full justify-start" onClick={() => drawingCanvasRef.current?.handleDownload()}>
+                  <Download className="w-4 h-4 mr-2" />
+                  Descarcă PNG
+                </Button>
+                <Button variant="outline" size="sm" className="w-full justify-start" onClick={() => drawingCanvasRef.current?.deleteSelection()}>
+                  Șterge selecția
+                </Button>
+                <Button size="sm" className="w-full justify-start bg-primary text-primary-foreground" onClick={() => drawingCanvasRef.current?.handleComplete()}>
+                  Finalizează lecția
+                </Button>
+                <Button size="sm" variant="secondary" className="w-full justify-start" onClick={handleNextLesson}>
+                  Lecția următoare
+                </Button>
+              </div>
+            </div>
           </div>
 
-          {/* Center Column - Drawing Canvas */}
           <div className="canvas-main">
+            <div className="canvas-zoom-bar">
+              <div className="flex items-center gap-2">
+                <Button size="sm" variant="outline" className="h-8 shrink-0" onClick={() => drawingCanvasRef.current?.undo()} title="Undo (Ctrl+Z)">
+                  <Undo2 className="w-4 h-4 mr-1" />
+                  <span className="hidden sm:inline text-xs">Undo</span>
+                </Button>
+                <Button size="sm" variant="outline" className="h-8 shrink-0" onClick={() => drawingCanvasRef.current?.redo()} title="Redo (Ctrl+Shift+Z)">
+                  <Redo2 className="w-4 h-4 mr-1" />
+                  <span className="hidden sm:inline text-xs">Redo</span>
+                </Button>
+              </div>
+              <span className="text-sm font-medium whitespace-nowrap">Zoom: {zoomPercent}%</span>
+              <div className="flex items-center gap-1 flex-1 justify-center">
+                <Button size="sm" variant="outline" className="h-8 w-8 p-0" onClick={() => drawingCanvasRef.current?.zoomOut()} title="Mărește">
+                  <ZoomOut className="w-4 h-4" />
+                </Button>
+                <Button size="sm" variant="outline" className="h-8 px-2 min-w-[4rem]" onClick={() => drawingCanvasRef.current?.resetZoom()}>
+                  Reset
+                </Button>
+                <Button size="sm" variant="outline" className="h-8 w-8 p-0" onClick={() => drawingCanvasRef.current?.zoomIn()} title="Micșorează">
+                  <ZoomIn className="w-4 h-4" />
+                </Button>
+              </div>
+              <p className="text-xs text-muted-foreground whitespace-nowrap">Scroll = zoom · Spațiu sau tool Mișcare = pan</p>
+            </div>
             <div className="canvas-container">
               <div className="canvas-area">
                 <DrawingCanvas
                   ref={drawingCanvasRef}
                   referenceImage={currentLesson.referenceImage}
                   lessonTitle={currentLesson.title}
-                  onNext={handleNext}
+                  lessonId={currentLesson.id}
                   onComplete={handleComplete}
                   showReference={showReference}
-                  onToggleReference={() => setShowReference(!showReference)}
                   activeColor={activeColor}
                   brushSize={brushSize}
+                  brushOpacity={brushOpacity}
+                  brushHardness={brushHardness}
+                  brushSmoothing={brushSmoothing}
+                  currentTool={currentTool}
+                  onPickColor={(color) => typeof color === "string" && setActiveColor(color)}
+                  onLayersChange={setLayersState}
+                  onHistoryChange={setHistoryState}
+                  onZoomChange={setZoomPercent}
                 />
               </div>
             </div>
           </div>
 
-          {/* Right Column - Tools and Actions */}
           <div className="canvas-tools-sidebar">
             <div className="sidebar-section">
               <div className="sidebar-header">
                 <Pencil className="w-5 h-5" />
                 <h3>Drawing Tools</h3>
               </div>
-              <div className="sidebar-content">
-                <div className="tool-selection">
-                  <Button 
-                    variant={currentTool === 'brush' ? 'default' : 'outline'}
-                    size="sm"
-                    className="tool-btn"
-                    onClick={() => handleToolChange('brush')}
-                    title="Brush tool (B)"
-                  >
-                    <Pencil className="w-4 h-4 mr-2" />
-                    Brush
-                    {/* <span className="ml-1 text-xs opacity-60">(B)</span> */}
-                  </Button>
-                  <Button 
-                    variant={currentTool === 'eraser' ? 'default' : 'outline'}
-                    size="sm"
-                    className="tool-btn"
-                    onClick={() => handleToolChange('eraser')}
-                    title="Eraser tool (E)"
-                  >
-                    <Eraser className="w-4 h-4 mr-2" />
-                    Eraser
-                    {/* <span className="ml-1 text-xs opacity-60">(E)</span> */}
-                  </Button>
+              <div className="sidebar-content space-y-3">
+                <div className="tool-selection flex flex-col gap-2">
+                  <div className="flex gap-2">
+                    <Button variant={currentTool === "brush" ? "default" : "outline"} size="sm" className="flex-1 min-w-0" onClick={() => setCurrentTool("brush")}>
+                      <Pencil className="w-4 h-4 mr-1 shrink-0" />
+                      <span className="truncate">Brush</span>
+                    </Button>
+                    <Button variant={currentTool === "eraser" ? "default" : "outline"} size="sm" className="flex-1 min-w-0" onClick={() => setCurrentTool("eraser")}>
+                      <Eraser className="w-4 h-4 mr-1 shrink-0" />
+                      <span className="truncate">Eraser</span>
+                    </Button>
+                  </div>
+                  <div className="flex gap-2">
+                    <Button variant={currentTool === "select" ? "default" : "outline"} size="sm" className="flex-1 min-w-0" onClick={() => setCurrentTool("select")}>
+                      <Move className="w-4 h-4 mr-1 shrink-0" />
+                      <span className="truncate">Select</span>
+                    </Button>
+                    <Button variant={currentTool === "eyedropper" ? "default" : "outline"} size="sm" className="flex-1 min-w-0" onClick={() => setCurrentTool("eyedropper")}>
+                      <Palette className="w-4 h-4 mr-1 shrink-0" />
+                      <span className="truncate">Picker</span>
+                    </Button>
+                  </div>
+                  <div className="flex gap-2">
+                    <Button variant={currentTool === "pan" ? "default" : "outline"} size="sm" className="flex-1 min-w-0" onClick={() => setCurrentTool("pan")} title="Mișcare canvas (H sau Spațiu + drag)">
+                      <Hand className="w-4 h-4 mr-1 shrink-0" />
+                      <span className="truncate">Mișcare</span>
+                    </Button>
+                  </div>
+                </div>
+
+                <div className="tool-control">
+                  <label>Brush Size: {brushSize}px ( [ / ] )</label>
+                  <input type="range" min="1" max="60" value={brushSize} onChange={(e) => setBrushSize(Number(e.target.value))} className="brush-slider" />
                 </div>
                 <div className="tool-control">
-                  <label>{currentTool === 'brush' ? 'Brush' : 'Eraser'} Size: {brushSize}px</label>
-                  <input 
-                    type="range" 
-                    min="1" 
-                    max="20" 
-                    value={brushSize}
-                    onChange={(e) => setBrushSize(Number(e.target.value))}
-                    className="brush-slider" 
-                  />
+                  <label>Opacity: {Math.round(brushOpacity * 100)}%</label>
+                  <input type="range" min="5" max="100" value={Math.round(brushOpacity * 100)} onChange={(e) => setBrushOpacity(Number(e.target.value) / 100)} />
+                </div>
+                <div className="tool-control">
+                  <label>Hardness: {Math.round(brushHardness * 100)}%</label>
+                  <input type="range" min="5" max="100" value={Math.round(brushHardness * 100)} onChange={(e) => setBrushHardness(Number(e.target.value) / 100)} />
+                </div>
+                <div className="tool-control">
+                  <label>Smoothing: {Math.round(brushSmoothing * 100)}%</label>
+                  <input type="range" min="0" max="100" value={Math.round(brushSmoothing * 100)} onChange={(e) => setBrushSmoothing(Number(e.target.value) / 100)} />
+                </div>
+
+                <div className="rounded border p-2">
+                  <p className="text-xs text-muted-foreground mb-1">Brush Preview</p>
+                  <div className="h-12 flex items-center justify-center">
+                    <div
+                      style={{
+                        width: `${Math.max(4, brushSize * 2)}px`,
+                        height: `${Math.max(4, brushSize * 2)}px`,
+                        borderRadius: "999px",
+                        background: activeColor,
+                        opacity: brushOpacity,
+                        filter: `blur(${Math.max(0, (1 - brushHardness) * 6)}px)`,
+                      }}
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2">
+                  {BRUSH_PRESETS.map((preset) => (
+                    <Button
+                      key={preset.name}
+                      size="sm"
+                      variant="outline"
+                      onClick={() => {
+                        setBrushSize(preset.size);
+                        setBrushOpacity(preset.opacity);
+                        setBrushHardness(preset.hardness);
+                        setBrushSmoothing(preset.smoothing);
+                      }}
+                    >
+                      {preset.name}
+                    </Button>
+                  ))}
                 </div>
               </div>
             </div>
@@ -337,113 +357,114 @@ const Canvas = () => {
                 <Palette className="w-5 h-5" />
                 <h3>Colors</h3>
               </div>
-              <div className="sidebar-content">
-                <div className="color-palette">
-                  <div 
-                    className={`color-swatch black ${activeColor === '#000000' ? 'active' : ''}`}
-                    onClick={() => handleColorChange('#000000')}
-                  ></div>
-                  <div 
-                    className={`color-swatch dark-grey ${activeColor === '#444444' ? 'active' : ''}`}
-                    onClick={() => handleColorChange('#444444')}
-                  ></div>
-                  <div 
-                    className={`color-swatch medium-grey ${activeColor === '#888888' ? 'active' : ''}`}
-                    onClick={() => handleColorChange('#888888')}
-                  ></div>
-                  <div 
-                    className={`color-swatch light-grey ${activeColor === '#cccccc' ? 'active' : ''}`}
-                    onClick={() => handleColorChange('#cccccc')}
-                  ></div>
-                  <div 
-                    className={`color-swatch white ${activeColor === '#ffffff' ? 'active' : ''}`}
-                    onClick={() => handleColorChange('#ffffff')}
-                  ></div>
-                  <div 
-                    className={`color-swatch very-light-grey ${activeColor === '#f0f0f0' ? 'active' : ''}`}
-                    onClick={() => handleColorChange('#f0f0f0')}
-                  ></div>
-                  <div 
-                    className={`color-swatch dark-brown ${activeColor === '#8B4513' ? 'active' : ''}`}
-                    onClick={() => handleColorChange('#8B4513')}
-                  ></div>
-                  <div 
-                    className={`color-swatch orange ${activeColor === '#D2691E' ? 'active' : ''}`}
-                    onClick={() => handleColorChange('#D2691E')}
-                  ></div>
-                  <div 
-                    className={`color-swatch light-brown ${activeColor === '#CD853F' ? 'active' : ''}`}
-                    onClick={() => handleColorChange('#CD853F')}
-                  ></div>
-                  <div 
-                    className={`color-swatch light-orange ${activeColor === '#F4A460' ? 'active' : ''}`}
-                    onClick={() => handleColorChange('#F4A460')}
-                  ></div>
-                  <div 
-                    className={`color-swatch teal ${activeColor === '#4ECDC4' ? 'active' : ''}`}
-                    onClick={() => handleColorChange('#4ECDC4')}
-                  ></div>
-                  <div 
-                    className={`color-swatch light-blue ${activeColor === '#45B7D1' ? 'active' : ''}`}
-                    onClick={() => handleColorChange('#45B7D1')}
-                  ></div>
+              <div className="sidebar-content space-y-3">
+                <div className="color-palette flex flex-wrap gap-2">
+                  {["#000000", "#444444", "#888888", "#cccccc", "#8B4513", "#D2691E", "#CD853F", "#F4A460", "#4ECDC4", "#45B7D1"].map(
+                    (color) => (
+                      <button
+                        key={color}
+                        type="button"
+                        className={`w-6 h-6 rounded border ${activeColor === color ? "ring-2 ring-primary" : ""}`}
+                        style={{ backgroundColor: color }}
+                        onClick={() => setActiveColor(color)}
+                        aria-label={`Pick ${color}`}
+                      />
+                    )
+                  )}
+                </div>
+                <div className="rounded border p-2">
+                  <p className="text-xs text-muted-foreground mb-2">Umbră / Lumină</p>
+                  <div className="flex gap-2">
+                    {SHADOW_LIGHT.map(({ name, color, size, opacity, hardness, smoothing }) => (
+                      <Button
+                        key={name}
+                        size="sm"
+                        variant="outline"
+                        className="flex-1"
+                        onClick={() => {
+                          setActiveColor(color);
+                          setBrushSize(size);
+                          setBrushOpacity(opacity);
+                          setBrushHardness(hardness);
+                          setBrushSmoothing(smoothing);
+                        }}
+                      >
+                        <span className="w-3 h-3 rounded-full border border-gray-400 inline-block mr-1" style={{ backgroundColor: color }} />
+                        {name}
+                      </Button>
+                    ))}
+                  </div>
                 </div>
                 <div className="custom-color">
-                  <label>Custom Color</label>
-                  <input
-                    type="color"
-                    value={activeColor}
-                    onChange={(e) => handleColorChange(e.target.value)}
-                    className="custom-color-input"
-                  />
-                  {/* <div 
-                    className="custom-color-swatch"
-                    style={{ backgroundColor: activeColor }}
-                  ></div> */}
+                  <label className="block text-sm mb-1">Custom Color</label>
+                  <input type="color" value={activeColor} onChange={(e) => setActiveColor(e.target.value)} className="custom-color-input" />
+                  <p className="text-xs text-muted-foreground mt-1">Eyedropper: `I` sau `ALT + click`</p>
                 </div>
               </div>
             </div>
 
-            <div className="sidebar-section">
+            <div className="sidebar-section layers-panel">
               <div className="sidebar-header">
-                <Settings className="w-5 h-5" />
-                <h3>Actions</h3>
+                <Layers className="w-4 h-4" />
+                <h3>Layers</h3>
               </div>
-              <div className="sidebar-content">
-                <div className="action-buttons">
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    className="action-btn"
-                    onClick={handleClearCanvas}
-                  >
-                    <RefreshCw className="w-4 h-4 mr-2" />
-                    Clear Canvas
+              <div className="sidebar-content space-y-1.5">
+                <Button size="sm" variant="outline" className="w-full text-xs h-8" onClick={() => drawingCanvasRef.current?.addLayer()}>
+                  + Add
+                </Button>
+                {layersState.layers.map((layer) => (
+                  <div key={layer.id} className={`border rounded p-1.5 ${layer.id === layersState.activeLayerId ? "border-primary" : ""}`}>
+                    <div className="flex items-center gap-1">
+                      <button type="button" className="text-left text-xs truncate flex-1 min-w-0" onClick={() => drawingCanvasRef.current?.setActiveLayer(layer.id)}>
+                        {layer.name}
+                      </button>
+                      <Button size="sm" variant="ghost" className="h-6 w-6 p-0" onClick={() => drawingCanvasRef.current?.moveLayer(layer.id, "up")}>↑</Button>
+                      <Button size="sm" variant="ghost" className="h-6 w-6 p-0" onClick={() => drawingCanvasRef.current?.moveLayer(layer.id, "down")}>↓</Button>
+                    </div>
+                    <div className="flex flex-wrap gap-1 mt-1">
+                      <Button size="sm" variant="outline" className="h-6 text-xs px-1.5" onClick={() => drawingCanvasRef.current?.toggleLayerVisibility(layer.id)}>{layer.visible ? "Hide" : "Show"}</Button>
+                      <Button size="sm" variant="outline" className="h-6 text-xs px-1.5" onClick={() => drawingCanvasRef.current?.toggleLayerLock(layer.id)}>{layer.locked ? "Lock" : "Unlock"}</Button>
+                      <Button size="sm" variant="outline" className="h-6 text-xs px-1.5" onClick={() => { const n = window.prompt("Nume", layer.name); if (n) drawingCanvasRef.current?.renameLayer(layer.id, n.trim()); }}>Ren</Button>
+                      <Button size="sm" variant="destructive" className="h-6 text-xs px-1.5" onClick={() => drawingCanvasRef.current?.deleteLayer(layer.id)}>Del</Button>
+                    </div>
+                    <div className="mt-1">
+                      <input type="range" min="0" max="100" value={Math.round(layer.opacity * 100)} onChange={(e) => drawingCanvasRef.current?.setLayerOpacity(layer.id, Number(e.target.value) / 100)} className="w-full h-1" title={`Opacitate ${Math.round(layer.opacity * 100)}%`} />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="sidebar-section history-panel">
+              <div className="sidebar-header">
+                <History className="w-4 h-4" />
+                <h3>History</h3>
+              </div>
+              <div className="sidebar-content space-y-1">
+                <div className="flex gap-1">
+                  <Button size="sm" variant="outline" className="flex-1 h-7 text-xs" onClick={() => drawingCanvasRef.current?.undo()}>
+                    <Undo2 className="w-3 h-3 mr-0.5" />Undo
                   </Button>
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    className="action-btn"
-                    onClick={handleDownloadCanvas}
-                  >
-                    <Download className="w-4 h-4 mr-2" />
-                    Download PNG
+                  <Button size="sm" variant="outline" className="flex-1 h-7 text-xs" onClick={() => drawingCanvasRef.current?.redo()}>
+                    <Redo2 className="w-3 h-3 mr-0.5" />Redo
                   </Button>
-                  <Button 
-                    className="action-btn primary"
-                    onClick={handleCompleteLesson}
-                  >
-                    Complete Lesson
-                  </Button>
-                  <Button 
-                    className="action-btn primary"
-                    onClick={handleNextLesson}
-                  >
-                    Next Lesson
-                  </Button>
+                </div>
+                <div className="max-h-20 overflow-auto border rounded p-1.5 text-xs">
+                  {historyState.entries.slice(-8).map((entry, idx) => {
+                    const globalIndex = historyState.entries.length - Math.min(8, historyState.entries.length) + idx;
+                    return (
+                      <div key={`${entry.at}_${idx}`} className={globalIndex === historyState.index ? "font-semibold truncate" : "text-muted-foreground truncate"}>
+                        {entry.label}
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             </div>
+
+            {activeLayer && (
+              <p className="text-xs text-muted-foreground">Active layer: {activeLayer.name} {activeLayer.locked ? "(locked)" : ""}</p>
+            )}
           </div>
         </div>
       </div>
@@ -451,4 +472,5 @@ const Canvas = () => {
   );
 };
 
-export default Canvas; 
+export default Canvas;
+

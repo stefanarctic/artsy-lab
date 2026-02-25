@@ -1,6 +1,33 @@
 const GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions";
 const DEFAULT_GROQ_MODEL = "meta-llama/llama-4-scout-17b-16e-instruct";
 const MAX_BASE64_IMAGE_BYTES = 3_800_000;
+const DEFAULT_TIMEOUT_MS = 25000;
+
+const fetchWithTimeout = async (url, options = {}, timeoutMs = DEFAULT_TIMEOUT_MS) => {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    return await fetch(url, { ...options, signal: controller.signal });
+  } finally {
+    clearTimeout(timeoutId);
+  }
+};
+
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+const fetchWithRetry = async (requestFn, retries = 2) => {
+  let lastError;
+  for (let attempt = 0; attempt <= retries; attempt += 1) {
+    try {
+      return await requestFn();
+    } catch (error) {
+      lastError = error;
+      if (attempt === retries) break;
+      await sleep(400 * (attempt + 1));
+    }
+  }
+  throw lastError;
+};
 
 const fileToDataUrl = (file) =>
   new Promise((resolve, reject) => {
@@ -82,15 +109,39 @@ export const compareSketchesWithGroq = async ({
   userArtwork,
   lessonTitle,
 }) => {
+  const aiProxyUrl = import.meta.env.VITE_AI_PROXY_URL;
   const apiKey = import.meta.env.VITE_GROQ_API_KEY;
   const model = import.meta.env.VITE_GROQ_MODEL || DEFAULT_GROQ_MODEL;
 
-  if (!apiKey) {
+  if (!aiProxyUrl && !apiKey) {
     throw new Error("Missing VITE_GROQ_API_KEY in .env");
   }
 
   if (!userArtwork) {
     throw new Error("No user artwork provided for AI critique.");
+  }
+
+  if (aiProxyUrl) {
+    const response = await fetchWithRetry(() =>
+      fetchWithTimeout(
+        aiProxyUrl,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ referenceImage, userArtwork, lessonTitle }),
+        },
+        DEFAULT_TIMEOUT_MS
+      )
+    );
+
+    if (!response.ok) {
+      throw new Error(`AI proxy request failed (${response.status}).`);
+    }
+    const payload = await response.json();
+    return {
+      overallScore: Number(payload?.overallScore || 0),
+      feedback: payload?.feedback || "AI returned empty feedback.",
+    };
   }
 
   const referenceDataUrl = await toDataUrl(referenceImage);
@@ -135,14 +186,20 @@ Feedback:
     ],
   };
 
-  const response = await fetch(GROQ_API_URL, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${apiKey}`,
-    },
-    body: JSON.stringify(requestBody),
-  });
+  const response = await fetchWithRetry(() =>
+    fetchWithTimeout(
+      GROQ_API_URL,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${apiKey}`,
+        },
+        body: JSON.stringify(requestBody),
+      },
+      DEFAULT_TIMEOUT_MS
+    )
+  );
 
   if (!response.ok) {
     let errorMessage = "";

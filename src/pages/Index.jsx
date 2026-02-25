@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button.jsx";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card.jsx";
 import { Badge } from "@/components/ui/badge.jsx";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/lib/AuthContext";
 import { toast } from "sonner";
 import ConfigTest from "@/components/ConfigTest";
@@ -137,9 +137,9 @@ const Index = () => {
             </div>
             
             <div className="header-nav-links">
-              <a href="/lessons">Lectii</a>
-              <a href="/gallery">Galerie</a>
-              <a href="/community">Comunitate</a>
+              <Link to="/lessons">Lectii</Link>
+              <Link to="/gallery">Galerie</Link>
+              <Link to="/community">Comunitate</Link>
               {user ? (
                 <div className="flex items-center gap-2">
                   <Button 

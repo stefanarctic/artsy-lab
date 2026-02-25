@@ -10,7 +10,8 @@ import {
   updateProfile
 } from 'firebase/auth';
 import { auth } from './firebase';
-import { createUserProfile, getUserProfile } from './firestore';
+import { createOrMergeUserProfile, createUserProfile, getUserProfile } from "./firestore";
+import { migrateLocalProgressToCloud } from "@/lib/progressService.js";
 import { toast } from 'sonner';
 
 const AuthContext = createContext();
@@ -31,6 +32,23 @@ export const AuthProvider = ({ children }) => {
 
     return unsubscribe;
   }, []);
+
+  useEffect(() => {
+    const syncUserProgress = async () => {
+      if (!user) return;
+      try {
+        await createOrMergeUserProfile(user.uid, {
+          email: user.email || "",
+          displayName: user.displayName || "",
+          photoURL: user.photoURL || null,
+        });
+        await migrateLocalProgressToCloud(user.uid);
+      } catch (error) {
+        console.error("Progress migration failed:", error);
+      }
+    };
+    syncUserProgress();
+  }, [user]);
 
   const signup = async (email, password, displayName) => {
     try {

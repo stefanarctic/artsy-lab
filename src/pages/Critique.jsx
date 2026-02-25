@@ -15,15 +15,20 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { compareSketchesWithGroq } from "@/lib/groqCritique.js";
+import { useAuth } from "@/lib/AuthContext.jsx";
+import { completeLessonForUser } from "@/lib/progressService.js";
+import { saveArtwork } from "@/lib/firestore.js";
 
 const Critique = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const { artwork, lessonTitle, isComplete, referenceImage } = location.state || {};
   
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [critique, setCritique] = useState(null);
   const [userNotes, setUserNotes] = useState("");
+  const [isPublishing, setIsPublishing] = useState(false);
 
   const generateCritique = async () => {
     if (!artwork) {
@@ -73,37 +78,44 @@ const Critique = () => {
   };
 
   const handleNextLesson = () => {
-    // Get the current lesson ID from the state
     const currentLessonId = location.state?.lessonId;
-    
-    if (currentLessonId) {
-      // Get lessons from localStorage
-      const savedLessons = localStorage.getItem('lessons');
-      if (savedLessons) {
-        const lessons = JSON.parse(savedLessons);
-        
-        // Find the current lesson index
-        const currentIndex = lessons.findIndex(l => l.id === currentLessonId);
-        
-        if (currentIndex !== -1) {
-          const updatedLessons = lessons.map((lesson, index) => {
-            if (index === currentIndex) {
-              // Mark current lesson as completed
-              return { ...lesson, completed: true };
-            } else if (index === currentIndex + 1) {
-              // Unlock the next lesson
-              return { ...lesson, locked: false };
-            }
-            return lesson;
-          });
-          
-          localStorage.setItem('lessons', JSON.stringify(updatedLessons));
-          toast.success("Lecție completată! Următoarea lecție a fost deblocată.");
-        }
-      }
+    if (!currentLessonId) {
+      navigate("/lessons");
+      return;
     }
 
+    completeLessonForUser(user?.uid, currentLessonId)
+      .then(() => toast.success("Lecție completată! Următoarea lecție a fost deblocată."))
+      .catch(() => toast.error("Am salvat progresul local, dar sincronizarea cloud a eșuat."));
     navigate("/lessons");
+  };
+
+  const handlePublishToGallery = async () => {
+    if (!user || !artwork) {
+      toast.error("Ai nevoie de autentificare și o lucrare validă.");
+      return;
+    }
+    setIsPublishing(true);
+    try {
+      await saveArtwork(user.uid, {
+        image: artwork,
+        title: `${lessonTitle || "Lucrare"} - ${new Date().toLocaleDateString("ro-RO")}`,
+        lessonId: location.state?.lessonId || "head-shape",
+        authorName: user.displayName || user.email || "Artist",
+        authorAvatar: user.photoURL || null,
+        score: critique?.overallScore || 0,
+        critiqueSummary: critique?.feedback || "",
+        notes: userNotes.trim(),
+        isPublic: true,
+        likedBy: [],
+      });
+      toast.success("Lucrarea a fost publicată în galerie.");
+    } catch (error) {
+      console.error(error);
+      toast.error("Publicarea în galerie a eșuat.");
+    } finally {
+      setIsPublishing(false);
+    }
   };
 
   return (
@@ -270,6 +282,14 @@ const Critique = () => {
                     className="flex-1"
                   >
                     Continue Learning
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="lg"
+                    onClick={handlePublishToGallery}
+                    disabled={isPublishing || !artwork}
+                  >
+                    {isPublishing ? "Publishing..." : "Publish to Gallery"}
                   </Button>
                   <Button 
                     variant="outline" 

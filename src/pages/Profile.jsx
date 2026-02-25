@@ -8,9 +8,10 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar.jsx"
 import { Progress } from "@/components/ui/progress.jsx";
 import { Badge } from "@/components/ui/badge.jsx";
 import { useAuth } from "@/lib/AuthContext";
-import { getUserProfile, updateUserProfile, createUserProfile } from "@/lib/firestore";
+import { getUserArtworks, getUserProfile, updateUserProfile, createUserProfile } from "@/lib/firestore";
 import { updateProfile } from "firebase/auth";
 import { auth } from "@/lib/firebase";
+import { uploadImage } from "@/lib/cloudinaryUtils.js";
 import { toast } from "sonner";
 import { 
   User, 
@@ -30,11 +31,14 @@ const Profile = () => {
     displayName: "",
     email: "",
     bio: "",
-    photoURL: null
+    photoURL: null,
+    totalLessons: 0,
+    averageScore: 0
   });
   const [isLoading, setIsLoading] = useState(true);
   const [tempPhotoURL, setTempPhotoURL] = useState(null);
   const [photoFile, setPhotoFile] = useState(null);
+  const [artworksCount, setArtworksCount] = useState(0);
 
   // Load user profile data
   const [initialLoadDone, setInitialLoadDone] = useState(false);
@@ -66,8 +70,12 @@ const Profile = () => {
             displayName: profile.displayName || user.displayName || "",
             email: profile.email || user.email || "",
             bio: profile.bio || "",
-            photoURL: profile.photoURL || user.photoURL || null
+            photoURL: profile.photoURL || user.photoURL || null,
+            totalLessons: profile.totalLessons || 0,
+            averageScore: profile.averageScore || 0
           });
+          const artworks = await getUserArtworks(user.uid);
+          setArtworksCount(artworks.length);
           setInitialLoadDone(true);
         } catch (error) {
           console.error('Error loading profile:', error);
@@ -103,12 +111,9 @@ const Profile = () => {
     }
   ];
 
-  const progress = {
-    lessonsCompleted: 8,
-    totalLessons: 12,
-    artworksCreated: 15,
-    averageScore: 85
-  };
+  const lessonsCompleted = profileData.totalLessons || 0;
+  const totalLessons = 4;
+  const averageScore = profileData.averageScore || 0;
 
   const handleLogout = async () => {
     try {
@@ -123,6 +128,22 @@ const Profile = () => {
 
   const handleSaveProfile = async () => {
     if (!user) return;
+
+    const normalizedName = profileData.displayName.trim();
+    const normalizedBio = profileData.bio.trim();
+
+    if (!normalizedName) {
+      toast.error("Numele nu poate fi gol.");
+      return;
+    }
+    if (normalizedName.length > 60) {
+      toast.error("Numele trebuie să aibă maxim 60 de caractere.");
+      return;
+    }
+    if (normalizedBio.length > 200) {
+      toast.error("Bio trebuie să aibă maxim 200 de caractere.");
+      return;
+    }
     
     setLoading(true);
     try {
@@ -130,30 +151,13 @@ const Profile = () => {
 
       // If there's a new photo file, upload it to Cloudinary
       if (photoFile) {
-        const formData = new FormData();
-        formData.append('file', photoFile);
-        formData.append('upload_preset', 'artsy_uploads');
-
-        const response = await fetch(
-          `https://api.cloudinary.com/v1_1/ddbwrwscc/image/upload`,
-          {
-            method: 'POST',
-            body: formData,
-          }
-        );
-
-        if (!response.ok) {
-          throw new Error('Upload failed');
-        }
-
-        const data = await response.json();
-        finalPhotoURL = data.secure_url;
+        finalPhotoURL = await uploadImage(photoFile);
       }
 
       // First update Firestore
       const updateData = {
-        displayName: profileData.displayName,
-        bio: profileData.bio,
+        displayName: normalizedName,
+        bio: normalizedBio,
         photoURL: finalPhotoURL,
         updatedAt: new Date()
       };
@@ -161,13 +165,15 @@ const Profile = () => {
 
       // Then update Firebase Auth
       await updateProfile(auth.currentUser, {
-        displayName: profileData.displayName,
+        displayName: normalizedName,
         photoURL: finalPhotoURL
       });
 
       // Update local state with the final photo URL
       setProfileData(prev => ({
         ...prev,
+        displayName: normalizedName,
+        bio: normalizedBio,
         photoURL: finalPhotoURL
       }));
 
@@ -325,17 +331,17 @@ const Profile = () => {
                 <div>
                   <div className="flex justify-between mb-2">
                     <span>Lecții completate</span>
-                    <span>{progress.lessonsCompleted}/{progress.totalLessons}</span>
+                    <span>{lessonsCompleted}/{totalLessons}</span>
                   </div>
-                  <Progress value={(progress.lessonsCompleted / progress.totalLessons) * 100} />
+                  <Progress value={(lessonsCompleted / totalLessons) * 100} />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="text-center p-4 bg-muted rounded-lg">
-                    <div className="text-2xl font-bold">{progress.artworksCreated}</div>
+                    <div className="text-2xl font-bold">{artworksCount}</div>
                     <div className="text-sm text-muted-foreground">Lucrări create</div>
                   </div>
                   <div className="text-center p-4 bg-muted rounded-lg">
-                    <div className="text-2xl font-bold">{progress.averageScore}%</div>
+                    <div className="text-2xl font-bold">{averageScore}%</div>
                     <div className="text-sm text-muted-foreground">Scor mediu</div>
                   </div>
                 </div>

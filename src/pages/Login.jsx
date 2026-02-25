@@ -17,10 +17,15 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const normalizedEmail = email.trim();
+    if (!normalizedEmail || password.length < 6) {
+      toast.error("Introdu un email valid și o parolă de minim 6 caractere.");
+      return;
+    }
     setLoading(true);
 
     try {
-      await login(email, password);
+      await login(normalizedEmail, password);
       toast.success("Autentificare reușită!");
       navigate("/");
     } catch (error) {

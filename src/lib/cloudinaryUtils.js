@@ -3,6 +3,10 @@ const UPLOAD_PRESET = 'artsy_uploads';
 
 // Function to upload image to Cloudinary
 export const uploadImage = async (file) => {
+  if (!CLOUD_NAME) {
+    throw new Error("Cloudinary cloud name missing. Set VITE_CLOUDINARY_CLOUD_NAME.");
+  }
+
   try {
     const formData = new FormData();
     formData.append('file', file);
@@ -17,7 +21,14 @@ export const uploadImage = async (file) => {
       }
     );
 
+    if (!response.ok) {
+      throw new Error(`Cloudinary upload failed (${response.status})`);
+    }
+
     const data = await response.json();
+    if (!data?.secure_url) {
+      throw new Error("Cloudinary did not return secure_url.");
+    }
     return data.secure_url;
   } catch (error) {
     console.error('Error uploading to Cloudinary:', error);
