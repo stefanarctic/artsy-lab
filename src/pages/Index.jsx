@@ -17,7 +17,8 @@ import {
   Play,
   User,
   LogOut,
-  Save
+  Save,
+  Clock
 } from "lucide-react";
 
 import artIcon from "@/assets/art-icon.png";
@@ -61,30 +62,17 @@ const Index = () => {
   ];
 
   const artStyles = [
-    {
-      title: "Forma Capului",
-      description: "Învață proporțiile și structura de bază a capului",
-      color: "from-rose-500 to-pink-600",
-      difficulty: "Începător"
-    },
-    {
-      title: "Desenarea Ochilor",
-      description: "Stăpânește tehnicile de desenare a ochilor realiști",
-      color: "from-blue-500 to-cyan-600", 
-      difficulty: "Începător"
-    },
-    {
-      title: "Structura Nasului",
-      description: "Înțelege și desenează nasul din diferite unghiuri",
-      color: "from-purple-500 to-indigo-600",
-      difficulty: "Intermediar"
-    },
-    {
-      title: "Buzele și Gura",
-      description: "Creează buze expresive și naturale",
-      color: "from-amber-500 to-orange-600",
-      difficulty: "Intermediar"
-    }
+    { lessonId: "head-shape", title: "Forma Capului", description: "Învață proporțiile și structura de bază a capului", color: "from-rose-500 to-pink-600", difficulty: "Începător", duration: "~15 min" },
+    { lessonId: "eyes", title: "Desenarea Ochilor", description: "Stăpânește tehnicile de desenare a ochilor realiști", color: "from-blue-500 to-cyan-600", difficulty: "Începător", duration: "~20 min" },
+    { lessonId: "nose", title: "Structura Nasului", description: "Înțelege și desenează nasul din diferite unghiuri", color: "from-purple-500 to-indigo-600", difficulty: "Intermediar", duration: "~18 min" },
+    { lessonId: "mouth", title: "Buzele și Gura", description: "Creează buze expresive și naturale", color: "from-amber-500 to-orange-600", difficulty: "Intermediar", duration: "~22 min" },
+    { lessonId: "eyebrows", title: "Sprâncenele", description: "Forma și direcția firelor pentru sprâncene naturale", color: "from-teal-500 to-emerald-600", difficulty: "Începător", duration: "~12 min" },
+    { lessonId: "ears", title: "Urechile", description: "Anatomia urechii din profil și semi-profil", color: "from-slate-500 to-slate-700", difficulty: "Începător", duration: "~16 min" },
+    { lessonId: "hair-line", title: "Părul și linia capului", description: "Linia de creștere și textura părului realist", color: "from-amber-600 to-amber-800", difficulty: "Începător", duration: "~18 min" },
+    { lessonId: "full-face", title: "Proporții față completă", description: "Combină toate elementele într-o față proporționată", color: "from-violet-500 to-purple-700", difficulty: "Intermediar", duration: "~25 min" },
+    { lessonId: "shadow-light", title: "Umbră și lumină pe față", description: "Valori de lumină și umbră pentru volum și expresie", color: "from-neutral-600 to-neutral-800", difficulty: "Intermediar", duration: "~22 min" },
+    { lessonId: "facial-expressions", title: "Expresii faciale", description: "Bucurie, tristețe, mânie și surpriză prin trăsături", color: "from-fuchsia-500 to-pink-600", difficulty: "Intermediar", duration: "~20 min" },
+    { lessonId: "portrait-three-quarter", title: "Portret în trei sferturi", description: "Față din unghi clasic, cu volum și perspectivă", color: "from-indigo-600 to-blue-800", difficulty: "Avansat", duration: "~28 min" },
   ];
 
   const toolFeatures = [
@@ -336,20 +324,25 @@ const Index = () => {
           </div>
         </section>
 
-        {/* Art Styles Section */}
-        <section className="art-styles">
+        {/* Lessons Section */}
+        <section className="art-styles" aria-label="Lecții de desen portret">
           <div className="art-styles-header">
             <h2 className="art-styles-title">
-              <span>Stiluri de Artă</span>
+              <span>Lecții de portret</span>
             </h2>
             <p className="art-styles-description">
-              Explorează diverse tehnici și stiluri artistice pentru a-ți dezvolta propriul stil unic
+              Parcurge lecțiile în ordine și exersează direct pe canvas cu imagini de referință
             </p>
           </div>
           <div className="art-styles-grid">
             {artStyles.map((style, index) => (
-              <Card key={index} className="art-style-card">
+              <Card
+                key={style.lessonId}
+                className="art-style-card"
+                onClick={() => navigate(`/canvas/${style.lessonId}`)}
+              >
                 <div className={`art-style-header bg-gradient-to-br ${style.color}`}>
+                  <span className="art-style-number">Lecția {index + 1}</span>
                   <div className="art-style-icon">
                     <Pencil />
                   </div>
@@ -364,10 +357,18 @@ const Index = () => {
                   <CardDescription className="art-style-description">
                     {style.description}
                   </CardDescription>
+                  <div className="art-style-duration">
+                    <Clock className="w-4 h-4" aria-hidden />
+                    <span>{style.duration}</span>
+                  </div>
                 </CardHeader>
                 <CardContent className="art-style-content">
-                  <Button variant="outline" className="art-style-button">
-                    <Pencil />
+                  <Button
+                    variant="outline"
+                    className="art-style-button"
+                    onClick={(e) => { e.stopPropagation(); navigate(`/canvas/${style.lessonId}`); }}
+                  >
+                    <Play className="w-4 h-4" aria-hidden />
                     Începe să practici
                   </Button>
                 </CardContent>

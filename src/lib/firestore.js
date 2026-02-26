@@ -194,11 +194,12 @@ export const toggleLikeOnDocument = async ({ collectionName, docId, userId, like
   });
 };
 
-export const addCommentToPost = async (postId, userId, content) => {
+export const addCommentToPost = async (postId, userId, content, authorName = null) => {
   const commentRef = collection(db, COLLECTIONS.posts, postId, COLLECTIONS.comments);
   await addDoc(commentRef, {
     userId,
     content,
+    authorName: authorName || null,
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
   });

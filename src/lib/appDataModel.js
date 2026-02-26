@@ -6,7 +6,19 @@ export const COLLECTIONS = {
   likes: "likes",
 };
 
-export const LESSON_ORDER = ["head-shape", "eyes", "nose", "mouth"];
+export const LESSON_ORDER = [
+  "head-shape",
+  "eyes",
+  "nose",
+  "mouth",
+  "eyebrows",
+  "ears",
+  "hair-line",
+  "full-face",
+  "shadow-light",
+  "facial-expressions",
+  "portrait-three-quarter",
+];
 
 export const getDefaultUserStats = () => ({
   totalArtworks: 0,
